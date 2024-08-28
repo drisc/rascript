@@ -67,13 +67,11 @@ RatchetWeaponLookup = {
     0x0a: "RYNO",
 }
 
-//function PlayerInGame() => byte(0x0084ec5c)
 function GameState() => byte(0x0084ec5c)
 
 // Static Data Checks
 function CurrentCharacter() => byte(0x00854cc0)
 function StageID() => dword(0x008ee56c)
-function FilePlayTime() => dword(0x00907078)
 function TitaniumBoltCount() => dword(0x008edbb7)
 function ThermOpticShades() => byte(0x008990e8)
 function ChallengeModeActive() => byte(0x008ee574) >= 1
