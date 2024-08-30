@@ -67,15 +67,15 @@ RatchetWeaponLookup = {
     0x0a: "RYNO",
 }
 
-function GameState() => byte(0x0084ec5c)
-
 // Static Data Checks
+function GameState() => byte(0x0084ec5c)
 function CurrentCharacter() => byte(0x00854cc0)
 function StageID() => dword(0x008ee56c)
 function TitaniumBoltCount() => dword(0x008edbb7)
 function ThermOpticShades() => byte(0x008990e8)
 function ChallengeModeActive() => byte(0x008ee574) >= 1
 function PlayTime() => dword(0x00907078)
+function AllKeyCards() => bitcount(0x008edc2a) == 3
 
 function CheckBit(offset, bit) {
     BitState = bit(bit, offset)
@@ -83,6 +83,142 @@ function CheckBit(offset, bit) {
     return
     BitState
 }
+
+// GameState | 0x02 is the saving state flag, while the save and load screens look the same the flag is different
+//           | 0x04 is the loading state flag
+//           | 0x08 is used then the level initially loads and no other load operation occurs such as the open world levels
+//           | 0x0b is used when a challenge is loaded from a menu within a level such as Max-Security Cells
+function InGame() => (GameState() == 0x0b || GameState() == 0x08)
+function GameNotLoading() => GameState() != 0x04
+
+//
+// Level Names
+//
+
+MAIN_MENU               = 0x00
+BOLTAIRE_MUSEUM         = 0x01
+BOLTAIRE_GEM_WING       = 0x02
+MAX_SECURITY_CELLS      = 0x03
+ASYANICA                = 0x04
+LARGER_THAN_LIFE        = 0x05
+COUNTESSES_VILLA        = 0x07
+GLACIARA                = 0x08
+MESS_HALL               = 0x09
+AZCOTAL_ALLEY           = 0x0a
+GONDOLA_AND_JIVE        = 0x0b
+CASINO                  = 0x0d
+EXERCISE_YARD           = 0x0e
+HIGH_STAKES_ROOM        = 0x0f
+VENANTONIO_LABS         = 0x10
+VENANTONIO_CANALS       = 0x11
+BUTTERQWARK             = 0x12
+BOLT_RESERVE            = 0x13
+A_EYE                   = 0x14
+THE_SHOWERS             = 0x15
+SPACESHIP_GRAVEYARD     = 0x16
+SAINT_QWARK             = 0x17
+QUASAR_FIELDS           = 0x18
+PRISON_BREAKOUT         = 0x19
+DAMS_EDGE               = 0x1a
+FICTION_FULL_OF_DOLLARS = 0x1b
+BULKHEAD_LOCK           = 0x1c
+UNDERWATER_BUNKER       = 0x1d
+KLUNK_BOSS_ARENA        = 0x1e
+HIG_TREEHOUSE           = 0x1f
+
+
+//
+// Weapon IDs
+//
+// Note that the gadgets at the end of the block are spaced wierdly so they have higher indexes to account for that and the applied offset from the WeaponStats() obj.
+TIEARANG                = 9
+CUFFLINK                = 10
+BLOWTORCH               = 13
+TANGLEVINE              = 11
+UMBRELLA                = 14
+KNUCKLES                = 12
+BLACKOUTPEN             = 15
+HYPNOWATCH              = 16
+MONOCLE                 = 22
+CLANKPDA                = 24
+THERMOSHADES            = 23
+JETBOOTS                = 30
+OMNIKEY                 = 31
+CLANKBOLTGRABBER        = 33
+CLANKFUKICK             = 35
+CLANKFUHOTFOOT          = 36
+CLANKFUHOTFOOTUPDATE    = 37
+SHARDGUN                = 1
+WALLOPER                = 4
+LANCERATORS             = 0
+MINELAUNCHER            = 7
+BEEMINES                = 2
+PORKBOMB                = 6
+SHOCKROCKET             = 3
+PLASMAWHIP              = 5
+RYNO                    = 8
+RATCHETPDA              = 17
+RATCHETBOLTGRABBER      = 18
+
+
+//
+// Character ID
+//
+
+RATCHET                 = 0x00
+CLANK                   = 0x01
+QWARK                   = 0x04
+GADGEBOTS               = 0x08
+
+
+//
+// Misc
+//
+
+DallasChalice = byte(0x008edc4b)
+BoltCount = dword(0x008ee578)
+BoltMultiplier = byte(0x008edbcd)
+
+
+// Create address list for challenges, progression etc
+function CreateAddrList(base_addr, length) {
+    list = []
+    for i in range (0, length - 1) {
+        array_push(list, byte(base_addr + i))
+    }
+    return list
+}
+
+// Stuct to return weapon data from a buffer, ammo and exp are currently unused but have been marked for the future.
+// Not all exp is in the code notes but it's easy to find next to the ammo
+function WeaponStats(addr) {
+    obj = {
+        "level": byte(addr),
+        "ammo": byte(addr + 0x04),
+        "exp": dword(addr + 0x08),
+        "mod1": byte(addr + 0x0c),
+        "mod2": byte(addr + 0x0d),
+        "obtained": byte(addr + 0x14)
+    }
+    
+    return obj
+} 
+
+function WeaponStatsBuf(addr) {
+    buf = []
+    SIZEOF_WeaponStats = 0x18
+    numWeapons = 60
+    
+    for i in range(0, numWeapons - 1)
+    {
+        array_push(buf, WeaponStats(addr + SIZEOF_WeaponStats * i))
+    }
+    
+    return buf
+}
+
+WeaponStats = WeaponStatsBuf(0x00898eac)
+
 
 function AchievementTemplate(title, description, points, trigger) {
     achievement(
@@ -97,6 +233,8 @@ function AchievementTemplate(title, description, points, trigger) {
 // Progression Achievements
 //
 
+// These achievements check for the cinematic bitflag specified in the ListConstruct, the StageID address
+// and if the game is currently in the load state when the cinematic bitflag is set (this is the save protection).
 function ProgressionTemplate(title, description, points, offset, bit, stage, cheevotype) {
     achievement(
     title,
@@ -115,38 +253,34 @@ CinematicsList = [
     0x008edbfe, 0x008edc00, 0x008edc02, 0x008edc04, 0x008edc06, 0x008edc08, 0x008edc0c, 0x008edc0e, 0x008edc10
 ]
 
-CinematicsListConstruct = {
-    1: {"title": "LOST and Found", "description": "Acquire the co-ordinates to Asyanica.", "points": 3, "offset": CinematicsList[0], "bit": 2, "stage": 0x02, "cheevotype": "progression"},
-    3: {"title": "The Turkey Is in the Dishwasher", "description": "Rescue Clank from the trap laid by Number Woo.", "points": 3, "offset": CinematicsList[1], "bit": 1, "stage": 0x04, "cheevotype": "progression"},
-    4: {"title": "Woo Got Played", "description": "Acquire the co-ordinates to the Countess' Villa.", "points": 3, "offset": CinematicsList[1], "bit": 2, "stage": 0x04, "cheevotype": "progression"},
-    5: {"title": "Adjusting a Doo-hicky", "description": "Defeat the 50-feet tall winged menace.", "points": 3, "offset": CinematicsList[1], "bit": 4, "stage": 0x05, "cheevotype": "progression"},
-    6: {"title": "Death Defying Dancing", "description": "Acquire the co-ordinates to Rionosis.", "points": 3, "offset": CinematicsList[2], "bit": 1, "stage": 0x07, "cheevotype": "progression"},
-    8: {"title": "Ace up the Sleeve", "description": "Acquire the co-ordinates to the Casino.", "points": 3, "offset": CinematicsList[3], "bit": 2, "stage": 0x0b, "cheevotype": "progression"},
-    9: {"title": "Publisher's Notes?", "description": "Defeat Jack of All Trades.", "points": 3, "offset": CinematicsList[3], "bit": 4, "stage": 0x0b, "cheevotype": "progression"},
-    
-    11: {"title": "An Exchange of Quips", "description": "Acquire the co-ordinates to Venantonio.", "points": 3, "offset": CinematicsList[4], "bit": 3, "stage": 0x0f, "cheevotype": "progression"},
-    12: {"title": "Beam Me Up", "description": "Acquire the co-ordinates to the Bolt Foundry.", "points": 3, "offset": CinematicsList[5], "bit": 3, "stage": 0x10, "cheevotype": "progression"},
-    13: {"title": "Good ol' Marv", "description": "Sing your heart out on Venantonio.", "points": 3, "offset": CinematicsList[5], "bit": 5, "stage": 0x12, "cheevotype": "progression"},
+CinematicsListConstruct = [
+    {"title": "LOST and Found", "description": "Acquire the co-ordinates to Asyanica.", "points": 3, "offset": CinematicsList[0], "bit": 2, "stage": BOLTAIRE_GEM_WING, "cheevotype": "progression"},
+    {"title": "The Turkey Is in the Dishwasher", "description": "Rescue Clank from the trap laid by Number Woo.", "points": 3, "offset": CinematicsList[1], "bit": 1, "stage": ASYANICA, "cheevotype": "progression"},
+    {"title": "Woo Got Played", "description": "Acquire the co-ordinates to the Countess' Villa.", "points": 3, "offset": CinematicsList[1], "bit": 2, "stage": ASYANICA, "cheevotype": "progression"},
+    {"title": "Adjusting a Doo-hicky", "description": "Defeat the 50-feet tall winged menace.", "points": 3, "offset": CinematicsList[1], "bit": 4, "stage": LARGER_THAN_LIFE, "cheevotype": "progression"},
+    {"title": "Death Defying Dancing", "description": "Acquire the co-ordinates to Rionosis.", "points": 3, "offset": CinematicsList[2], "bit": 1, "stage": COUNTESSES_VILLA, "cheevotype": "progression"},
+    {"title": "Ace up the Sleeve", "description": "Acquire the co-ordinates to the Casino.", "points": 3, "offset": CinematicsList[3], "bit": 2, "stage": GONDOLA_AND_JIVE, "cheevotype": "progression"},
+    {"title": "Publisher's Notes?", "description": "Defeat Jack of All Trades.", "points": 3, "offset": CinematicsList[3], "bit": 4, "stage": GONDOLA_AND_JIVE, "cheevotype": "progression"},
+    {"title": "An Exchange of Quips", "description": "Acquire the co-ordinates to Venantonio.", "points": 3, "offset": CinematicsList[4], "bit": 3, "stage": HIGH_STAKES_ROOM, "cheevotype": "progression"},
+    {"title": "Beam Me Up", "description": "Acquire the co-ordinates to the Bolt Foundry.", "points": 3, "offset": CinematicsList[5], "bit": 3, "stage": VENANTONIO_LABS, "cheevotype": "progression"},
+    {"title": "Good ol' Marv", "description": "Sing your heart out on Venantonio.", "points": 3, "offset": CinematicsList[5], "bit": 5, "stage": BUTTERQWARK, "cheevotype": "progression"},
+    {"title": "I Never Learned to Drive Stick", "description": "Catch up to the Kingpin in the Spaceship Graveyard.", "points": 3, "offset": CinematicsList[6], "bit": 1, "stage": SPACESHIP_GRAVEYARD, "cheevotype": "progression"},
+    {"title": "Spacenuns and Orphans", "description": "Defeat the All-seeing SpaceEye.", "points": 3, "offset": CinematicsList[6], "bit": 3, "stage": SAINT_QWARK, "cheevotype": "progression"},
+    {"title": "The Iron Giant", "description": "Find your ship after flying through the Quasar Fields.", "points": 3, "offset": CinematicsList[7], "bit": 0, "stage": QUASAR_FIELDS, "cheevotype": "progression"},
+    {"title": "Clanks' Incredible Car", "description": "Discover the location of Klunk's lair.", "points": 3, "offset": CinematicsList[7], "bit": 2, "stage": DAMS_EDGE, "cheevotype": "progression"},
+    {"title": "Down to His Skivvies", "description": "\"Save\" the dam and then take a dip.", "points": 3, "offset": CinematicsList[7], "bit": 4, "stage": FICTION_FULL_OF_DOLLARS, "cheevotype": "progression"},
+    {"title": "Evil Suck-Vac 3000", "description": "Witness Klunk's ultimate fate.", "points": 25, "offset": CinematicsList[1], "bit": 1, "stage": KLUNK_BOSS_ARENA, "cheevotype": "win_condition"},
+]
 
-
-    16: {"title": "I Never Learned to Drive Stick", "description": "Catch up to the Kingpin in the Spaceship Graveyard.", "points": 3, "offset": CinematicsList[6], "bit": 1, "stage": 0x16, "cheevotype": "progression"},
-    17: {"title": "Spacenuns and Orphans", "description": "Defeat the All-seeing SpaceEye.", "points": 3, "offset": CinematicsList[6], "bit": 3, "stage": 0x17, "cheevotype": "progression"},
-    18: {"title": "The Iron Giant", "description": "Find your ship after flying through the Quasar Fields.", "points": 3, "offset": CinematicsList[7], "bit": 0, "stage": 0x18, "cheevotype": "progression"},
-    19: {"title": "Clanks' Incredible Car", "description": "Discover the location of Klunk's lair.", "points": 3, "offset": CinematicsList[7], "bit": 2, "stage": 0x1a, "cheevotype": "progression"},
-    20: {"title": "Down to His Skivvies", "description": "\"Save\" the dam and then take a dip.", "points": 3, "offset": CinematicsList[7], "bit": 4, "stage": 0x1b, "cheevotype": "progression"},
-    
-    23: {"title": "Evil Suck-Vac 3000", "description": "Witness Klunk's ultimate fate.", "points": 25, "offset": CinematicsList[1], "bit": 1, "stage": 0x1e, "cheevotype": "win_condition"},
-}
-
-for Cinematics in CinematicsListConstruct {
+for Cinematic in CinematicsListConstruct {
     ProgressionTemplate(
-        CinematicsListConstruct[Cinematics]["title"],
-        CinematicsListConstruct[Cinematics]["description"],
-        CinematicsListConstruct[Cinematics]["points"],
-        CinematicsListConstruct[Cinematics]["offset"],
-        CinematicsListConstruct[Cinematics]["bit"],
-        CinematicsListConstruct[Cinematics]["stage"],
-        CinematicsListConstruct[Cinematics]["cheevotype"]
+        Cinematic["title"],
+        Cinematic["description"],
+        Cinematic["points"],
+        Cinematic["offset"],
+        Cinematic["bit"],
+        Cinematic["stage"],
+        Cinematic["cheevotype"]
     )
 }
 
@@ -156,25 +290,25 @@ ChallengesList = [
     0x008edbd4, 0x008edbdc, 0x008edbe4, 0x008edbec, 0x008edbf4, 0x008edc1f, 0x008edc23
 ]
 
-ChallengesCompleteListConstruct = {
-    2: {"title": "From Brushing Teeth to Smashing Them", "description": "Survive Ratchet's first day in prison and obtain the Fire Wrench mod, Walloper, and Shard Gun.", "points": 5, "offset": ChallengesList[0], "bit": 0, "stage": 0x03, "cheevotype": "progression"},
-    7: {"title": "Messy Eaters", "description": "Live through the lunch rush in the Mess Hall.", "points": 3, "offset": ChallengesList[1], "bit": 0, "stage": 0x09, "cheevotype": "progression"},
-    8: {"title": "Playtime!", "description": "Make it through your Prison Yard time.", "points": 3, "offset": ChallengesList[2], "bit": 0, "stage": 0x0e, "cheevotype": "progression"},
-    9: {"title": "De-Briefing", "description": "Preserve your modesty in The Showers.", "points": 3, "offset": ChallengesList[3], "bit": 0, "stage": 0x15, "cheevotype": "progression"},
-    10: {"title": "Catch Me If You Can!", "description": "Prevent the prisoners from escaping!", "points": 3, "offset": ChallengesList[4], "bit": 0, "stage": 0x19, "cheevotype": "progression"},
-    11: {"title": "The Porcupine Has Eaten the Snowman", "description": "Free Clank from the vault at the Bolt Foundry.", "points": 5, "offset": ChallengesList[5], "bit": 0, "stage": 0x14, "cheevotype": "progression"},
-    12: {"title": "Cold Call Bots", "description": "Find a way around the door in Klunk's lair.", "points": 3, "offset": ChallengesList[5], "bit": 0, "stage": 0x14, "cheevotype": "progression"},
-}
+ChallengesCompleteListConstruct = [
+    {"title": "From Brushing Teeth to Smashing Them", "description": "Survive Ratchet's first day in prison and obtain the Fire Wrench mod, Walloper, and Shard Gun.", "points": 5, "offset": ChallengesList[0], "bit": 0, "stage": MAX_SECURITY_CELLS, "cheevotype": "progression"},
+    {"title": "Messy Eaters", "description": "Live through the lunch rush in the Mess Hall.", "points": 3, "offset": ChallengesList[1], "bit": 0, "stage": MESS_HALL, "cheevotype": "progression"},
+    {"title": "Playtime!", "description": "Make it through your Prison Yard time.", "points": 3, "offset": ChallengesList[2], "bit": 0, "stage": EXERCISE_YARD, "cheevotype": "progression"},
+    {"title": "De-Briefing", "description": "Preserve your modesty in The Showers.", "points": 3, "offset": ChallengesList[3], "bit": 0, "stage": THE_SHOWERS, "cheevotype": "progression"},
+    {"title": "Catch Me If You Can!", "description": "Prevent the prisoners from escaping!", "points": 3, "offset": ChallengesList[4], "bit": 0, "stage": PRISON_BREAKOUT, "cheevotype": "progression"},
+    {"title": "The Porcupine Has Eaten the Snowman", "description": "Free Clank from the vault at the Bolt Foundry.", "points": 5, "offset": ChallengesList[5], "bit": 0, "stage": A_EYE, "cheevotype": "progression"},
+    {"title": "Cold Call Bots", "description": "Find a way around the door in Klunk's lair.", "points": 3, "offset": ChallengesList[5], "bit": 0, "stage": BULKHEAD_LOCK, "cheevotype": "progression"},
+]
 
 for Challenge in ChallengesCompleteListConstruct {
     ProgressionTemplate(
-        ChallengesCompleteListConstruct[Challenge]["title"],
-        ChallengesCompleteListConstruct[Challenge]["description"],
-        ChallengesCompleteListConstruct[Challenge]["points"],
-        ChallengesCompleteListConstruct[Challenge]["offset"],
-        ChallengesCompleteListConstruct[Challenge]["bit"],
-        ChallengesCompleteListConstruct[Challenge]["stage"],
-        ChallengesCompleteListConstruct[Challenge]["cheevotype"]
+        Challenge["title"],
+        Challenge["description"],
+        Challenge["points"],
+        Challenge["offset"],
+        Challenge["bit"],
+        Challenge["stage"],
+        Challenge["cheevotype"]
     )
 }
 
@@ -182,840 +316,184 @@ for Challenge in ChallengesCompleteListConstruct {
 // Challenge Completed Achievements
 //
 
-ChallengeListConstruct = {
-    1: {"title": "Maximum OverLombax", "description": "Complete all the arena challenges in the Max-Security Cells.", "points": 5},
-    2: {"title": "Chow Time", "description": "Complete all the arena challenges in the Mess Hall.", "points": 5},
-    3: {"title": "Pumping Raritanium", "description": "Complete all the arena challenges in the Exercise Yard.", "points": 5},
-    4: {"title": "Don't Drop the Soap", "description": "Complete all the arena challenges in The Showers.", "points": 5},
-    5: {"title": "The Great Escape in Spaaaaace!", "description": "Complete all the arena challenges during the Prison Breakout.", "points": 5},
-    6: {"title": "Small Bots, Big City", "description": "Complete all the Gadgebot challenges on Asyanica.", "points": 5},
-    7: {"title": "Tiny Heist", "description": "Complete all the Gadgebot challenges at Fort Sprocket.", "points": 5},
-    8: {"title": "Bots in a Bubble", "description": "Complete all the Gadgebot challenges at the Underwater Bunker.", "points": 5},
-    9: {"title": "Extreme Sports Mode Activated", "description": "Complete all the snowboard challenges on Glaciara.", "points": 5},
-    10: {"title": "Turning the Tide", "description": "Complete all the boating challenges on Venantonio.", "points": 5},
-    11: {"title": "Rush Hour Rampage", "description": "Complete all the driving challenges on Hydrano.", "points": 5},
+MaxSecurityCellsChallenges = CreateAddrList(0x008edbd4, 5)
+MessHallChallenges = CreateAddrList(0x008edbdc, 5)
+ExerciseYardChallenges = CreateAddrList(0x008edbe4, 5)
+TheShowersChallenges = CreateAddrList(0x008edbf0, 5)
+PrisonBreakoutChallenges = CreateAddrList(0x008edbf4, 5)
+GadgebotAsyanicaChallenges = CreateAddrList(0x008edc1a, 3)
+GadgebotBoltReserveChallenges = CreateAddrList(0x008edc1f, 3)
+GadgeBotBunkerChallenges = CreateAddrList(0x008edc23, 2)
+SnowboardingChallenges = CreateAddrList(0x008edc3b, 3)
+BoatingChallenges = CreateAddrList(0x008edc3e, 3)
+DrivingChallenges = CreateAddrList(0x008edc41, 3)
+
+ChallengeListConstruct = [
+    {"title": "Maximum OverLombax", "description": "Complete all the arena challenges in the Max-Security Cells.", "points": 5, "stage": MAX_SECURITY_CELLS, "challenge_list": MaxSecurityCellsChallenges},
+    {"title": "Chow Time", "description": "Complete all the arena challenges in the Mess Hall.", "points": 5, "stage": MESS_HALL, "challenge_list": MessHallChallenges},
+    {"title": "Pumping Raritanium", "description": "Complete all the arena challenges in the Exercise Yard.", "points": 5, "stage": EXERCISE_YARD, "challenge_list": ExerciseYardChallenges},
+    {"title": "Don't Drop the Soap", "description": "Complete all the arena challenges in The Showers.", "points": 5, "stage": THE_SHOWERS, "challenge_list": TheShowersChallenges},
+    {"title": "The Great Escape in Spaaaaace!", "description": "Complete all the arena challenges during the Prison Breakout.", "points": 5, "stage": PRISON_BREAKOUT, "challenge_list": PrisonBreakoutChallenges},
+    {"title": "Small Bots, Big City", "description": "Complete all the Gadgebot challenges on Asyanica.", "points": 5, "stage": ASYANICA, "challenge_list": GadgebotAsyanicaChallenges    },
+    {"title": "Tiny Heist", "description": "Complete all the Gadgebot challenges at Fort Sprocket.", "points": 5, "stage": BOLT_RESERVE, "challenge_list": GadgebotBoltReserveChallenges},
+    {"title": "Bots in a Bubble", "description": "Complete all the Gadgebot challenges at the Underwater Bunker.", "points": 5, "stage": BULKHEAD_LOCK, "challenge_list": GadgeBotBunkerChallenges},
+    {"title": "Extreme Sports Mode Activated", "description": "Complete all the snowboard challenges on Glaciara.", "points": 5, "stage": GLACIARA, "challenge_list": SnowboardingChallenges},
+    {"title": "Turning the Tide", "description": "Complete all the boating challenges on Venantonio.", "points": 5, "stage": VENANTONIO_CANALS, "challenge_list": BoatingChallenges},
+    {"title": "Rush Hour Rampage", "description": "Complete all the driving challenges on Hydrano.", "points": 5, "stage": DAMS_EDGE, "challenge_list": DrivingChallenges},
+]
+
+for Challenge in ChallengeListConstruct
+{
+  AchievementTemplate(
+    Challenge["title"],
+    Challenge["description"],
+    Challenge["points"],
+    trigger = 
+    InGame() &&
+    StageID() == Challenge["stage"] &&
+    all_of(Challenge["challenge_list"], c => c >= 1) &&
+    prev(Challenge["challenge_list"][length(Challenge["challenge_list"]) - 1]) == 0
+  )
 }
 
-// Max-Security Cells
-AchievementTemplate(
-    ChallengeListConstruct[1]["title"],
-    ChallengeListConstruct[1]["description"],
-    ChallengeListConstruct[1]["points"],
-    trigger = 
-    (GameState() == 0x0b || GameState() == 0x08) &&
-    StageID() == 0x03 &&
-    byte(0x008edbd4) >= 1 && byte(0x008edbd5) >= 1 && byte(0x008edbd6) >= 1 && byte(0x008edbd7) >= 1 && byte(0x008edbd8) == 1 &&
-    prev(byte(0x008edbd8)) == 0
-)
-
-// Mess Hall
-AchievementTemplate(
-    ChallengeListConstruct[2]["title"],
-    ChallengeListConstruct[2]["description"],
-    ChallengeListConstruct[2]["points"],
-    trigger = 
-    (GameState() == 0x0b || GameState() == 0x08) &&
-    StageID() == 0x09 &&
-    byte(0x008edbdc) >= 1 && byte(0x008edbdd) >= 1 && byte(0x008edbde) >= 1 && byte(0x008edbdf) >= 1 && byte(0x008edbe0) == 1 &&
-    prev(byte(0x008edbe0)) == 0
-)
-
-// Exercise Yard
-AchievementTemplate(
-    ChallengeListConstruct[3]["title"],
-    ChallengeListConstruct[3]["description"],
-    ChallengeListConstruct[3]["points"],
-    trigger = 
-    (GameState() == 0x0b || GameState() == 0x08) &&
-    StageID() == 0x0e &&
-    byte(0x008edbe4) >= 1 && byte(0x008edbe5) >= 1 && byte(0x008edbe6) >= 1 && byte(0x008edbe7) >= 1 && byte(0x008edbe8) == 1 &&
-    prev(byte(0x008edbe8)) == 0
-)
-
-// The Showers
-AchievementTemplate(
-    ChallengeListConstruct[4]["title"],
-    ChallengeListConstruct[4]["description"],
-    ChallengeListConstruct[4]["points"],
-    trigger = 
-    (GameState() == 0x0b || GameState() == 0x08) &&
-    StageID() == 0x15 &&
-    byte(0x008edbec) >= 1 && byte(0x008edbed) >= 1 && byte(0x008edbee) >= 1 && byte(0x008edbef) >= 1 && byte(0x008edbf0) == 1 &&
-    prev(byte(0x008edbf0)) == 0
-)
-
-// Prison Breakout
-AchievementTemplate(
-    ChallengeListConstruct[5]["title"],
-    ChallengeListConstruct[5]["description"],
-    ChallengeListConstruct[5]["points"],
-    trigger = 
-    (GameState() == 0x0b || GameState() == 0x08) &&
-    StageID() == 0x19 &&
-    byte(0x008edbf4) >= 1 && byte(0x008edbf5) >= 1 && byte(0x008edbf6) >= 1 && byte(0x008edbf7) >= 1 && byte(0x008edbf8) == 1 &&
-    prev(byte(0x008edbf8)) == 0
-)
-
-// Gadgebots Asyanica
-AchievementTemplate(
-    ChallengeListConstruct[6]["title"],
-    ChallengeListConstruct[6]["description"],
-    ChallengeListConstruct[6]["points"],
-    trigger = 
-    (GameState() == 0x0b || GameState() == 0x08) &&
-    StageID() == 0x19 &&
-    byte(0x008edc1a) >= 1 && byte(0x008edc1b) >= 1 && byte(0x008edc1c) == 1 &&
-    prev(byte(0x008edc1c)) == 0
-)
-
-// Gadgebots Bolt Reserve
-AchievementTemplate(
-    ChallengeListConstruct[7]["title"],
-    ChallengeListConstruct[7]["description"],
-    ChallengeListConstruct[7]["points"],
-    trigger = 
-    (GameState() == 0x0b || GameState() == 0x08) &&
-    StageID() == 0x19 &&
-    byte(0x008edc1f) >= 1 && byte(0x008edc20) >= 1 && byte(0x008edc21) == 1 &&
-    prev(byte(0x008edc21)) == 0
-)
-
-// Gadgbots Bunker
-AchievementTemplate(
-    ChallengeListConstruct[8]["title"],
-    ChallengeListConstruct[8]["description"],
-    ChallengeListConstruct[8]["points"],
-    trigger = 
-    (GameState() == 0x0b || GameState() == 0x08) &&
-    StageID() == 0x19 &&
-    byte(0x008edc23) >= 1 && byte(0x008edc24) == 1 &&
-    prev(byte(0x008edc24)) == 0
-)
-
-// Snowboarding
-AchievementTemplate(
-    ChallengeListConstruct[9]["title"],
-    ChallengeListConstruct[9]["description"],
-    ChallengeListConstruct[9]["points"],
-    trigger = 
-    (GameState() == 0x0b || GameState() == 0x08) &&
-    StageID() == 0x08 &&
-    byte(0x008edc3b) >= 1 &&
-    byte(0x008edc3c) >= 1 && byte(0x008edc3d) >= 1 &&
-    (prev(byte(0x008edc3c)) == 0 || prev(byte(0x008edc3d)) == 0)
-)
-
-// Boating
-AchievementTemplate(
-    ChallengeListConstruct[10]["title"],
-    ChallengeListConstruct[10]["description"],
-    ChallengeListConstruct[10]["points"],
-    trigger = 
-    (GameState() == 0x0b || GameState() == 0x08) &&
-    StageID() == 0x11 &&
-    byte(0x008edc3e) >= 1 && byte(0x008edc3f) >= 1 && byte(0x008edc40) == 1 &&
-    prev(byte(0x008edc40)) == 0
-)
-
-// Driving
-AchievementTemplate(
-    ChallengeListConstruct[11]["title"],
-    ChallengeListConstruct[11]["description"],
-    ChallengeListConstruct[11]["points"],
-    trigger = 
-    (GameState() == 0x0b || GameState() == 0x08) &&
-    StageID() == 0x19 &&
-    byte(0x008edc41) >= 1 && byte(0x008edc42) >= 1 && byte(0x008edc43) == 1 &&
-    prev(byte(0x008edc43)) == 0
-)
 
 //
 // Weapon Unlock Achievements
 //
-WeaponUnlockListConstruct = {
-    1: {"title": "Sharp Dresser", "description": "Obtain the Tie-A-Rang, then save the game.", "points": 3},
-    2: {"title": "Off the Cuff", "description": "Obtain the Cufflink Bomb, then save the game.", "points": 3},
-    3: {"title": "Melt the Locks Off", "description": "Obtain the Blowtorch Briefcase, then save the game.", "points": 3},
-    4: {"title": "Plants Vs. Robots", "description": "Obtain the Tanglevine Carnation, then save the game.", "points": 3},
-    5: {"title": "Loud Stick", "description": "Purchase the ThunderStorm Umbrella.", "points": 3},
-    6: {"title": "Wham!", "description": "Purchase the Holo-Knuckles.", "points": 3},
-    7: {"title": "Blotter", "description": "Obtain the Blackout Pen, then save the game.", "points": 3},
-    8: {"title": "You Are Feeling Very Sleeeepyyyy", "description": "Purchase the Hypno-Watch.", "points": 3},
-    9: {"title": "Spiffing Eyeware Old Chap", "description": "Obtain the Holo-Monocle.", "points": 3},
-    10: {"title": "Pretty Dang Awesome", "description": "Purchase the Agency PDA.", "points": 3},
-    11: {"title": "Nice Shades Dude!", "description": "Obtain the Therm-Optic Shades, then save the game.", "points": 3},
-    12: {"title": "Do a Flip!", "description": "Obtain the Jet Boots, then enter the Gem Wing.", "points": 3},
-    13: {"title": "Locks? HA!", "description": "Obtain the Omni-Key.", "points": 3},
-    //14: {"title": "What am I Missing?", "description": "Obtain the Map-O-Matic.", "points": 5}, // The Map-O-Matic isn't obtainable in the game and does nothing when cheated in.
-    15: {"title": "Attractive, for a Robot", "description": "Purchase the Bolt Grabber.", "points": 3},
-    16: {"title": "Fleet Feet", "description": "Purchase the Clank Fu Kick.", "points": 3}, // Actual clank fu kick
-    17: {"title": "A Fire in my Sole", "description": "Purchase the Clank Fu Hot Foot Download.", "points": 4},
-    18: {"title": "An Inferno where I Tread", "description": "Purchase the Clank Fu Hot Foot 2.1 Beta Download.", "points": 5},
-    //19: {"title": "The Spoils of Victory", "description": "Pick up the Shard Gun and Walloper then complete the first arena battle.", "points": 2}, // Grouped with first arena win
-    //20: {"title": "Give 'em a Good Whack", "description": "Obtain the Walloper then complete the first arena battle.", "points": 2},
-    21: {"title": "Dual Wieldable", "description": "Obtain the Dual Lancerators, then save the game or go to a checkpoint.", "points": 3},
-    22: {"title": "Balls that Seek", "description": "Obtain the Mine Launcher, then save the game or go to a checkpoint.", "points": 3},
-    23: {"title": "*Angry Bee Noises*", "description": "Obtain the Bee Mine Launcher Mk. II, then save the game or go to a checkpoint.", "points": 3},
-    24: {"title": "Makin' Bacon", "description": "Purchase the Pork Bomb Gun.", "points": 3},
-    25: {"title": "No Bottles Here", "description": "Purchase the Shock Rocket.", "points": 3},
-    26: {"title": "Long, Hot and Flexible", "description": "Purchase the Plasma Whip.", "points": 3},
-    27: {"title": "That One Gun", "description": "Purchase the RYNO.", "points": 10},
-    28: {"title": "Public Display of Affection?", "description": "Obtain the Gadgetron PDA.", "points": 5},
-    29: {"title": "Long Distance Change Collector", "description": "Obtain Slim Cognito's Bolt Extractor.", "points": 5},    
+WeaponUnlockListConstruct = [
+    {"title": "Sharp Dresser", "description": "Obtain the Tie-A-Rang, then save the game.", "points": 3, "weapon": TIEARANG, "challenge_mode_needed": 0},
+    {"title": "Off the Cuff", "description": "Obtain the Cufflink Bomb, then save the game.", "points": 3, "weapon": CUFFLINK, "challenge_mode_needed": 0},
+    {"title": "Melt the Locks Off", "description": "Obtain the Blowtorch Briefcase, then save the game.", "points": 3, "weapon": BLOWTORCH, "challenge_mode_needed": 0},
+    {"title": "Plants Vs. Robots", "description": "Obtain the Tanglevine Carnation, then save the game.", "points": 3, "weapon": TANGLEVINE, "challenge_mode_needed": 0},
+    {"title": "Loud Stick", "description": "Purchase the ThunderStorm Umbrella.", "points": 3, "weapon": UMBRELLA, "challenge_mode_needed": 0},
+    {"title": "Wham!", "description": "Purchase the Holo-Knuckles.", "points": 3, "weapon": KNUCKLES, "challenge_mode_needed": 0},
+    {"title": "Blotter", "description": "Obtain the Blackout Pen, then save the game.", "points": 3, "weapon": BLACKOUTPEN, "challenge_mode_needed": 0},
+    {"title": "You Are Feeling Very Sleeeepyyyy", "description": "Purchase the Hypno-Watch.", "points": 3, "weapon": HYPNOWATCH, "challenge_mode_needed": 0},
+    {"title": "Spiffing Eyeware Old Chap", "description": "Obtain the Holo-Monocle.", "points": 3, "weapon": MONOCLE, "challenge_mode_needed": 0},
+    {"title": "Pretty Dang Awesome", "description": "Purchase the Agency PDA.", "points": 3, "weapon": CLANKPDA, "challenge_mode_needed": 0},
+    {"title": "Nice Shades Dude!", "description": "Obtain the Therm-Optic Shades, then save the game.", "points": 3, "weapon": THERMOSHADES, "challenge_mode_needed": 1},
+    {"title": "Do a Flip!", "description": "Obtain the Jet Boots, then enter the Gem Wing.", "points": 3, "weapon": JETBOOTS, "challenge_mode_needed": 0},
+    {"title": "Locks? HA!", "description": "Obtain the Omni-Key.", "points": 3, "weapon": OMNIKEY, "challenge_mode_needed": 0},
+    //{"title": "[VOID] What am I Missing?", "description": "Obtain the Map-O-Matic.", "points": 5,  "weapon": WeaponID}, // The Map-O-Matic isn't obtainable in the game and does nothing when cheated in.
+    {"title": "Attractive, for a Robot", "description": "Purchase the Bolt Grabber.", "points": 3, "weapon": CLANKBOLTGRABBER, "challenge_mode_needed": 0},
+    {"title": "Fleet Feet", "description": "Purchase the Clank Fu Kick.", "points": 3, "weapon": CLANKFUKICK, "challenge_mode_needed": 0}, // Actual clank fu kick
+    {"title": "A Fire in my Sole", "description": "Purchase the Clank Fu Hot Foot Download.", "points": 4, "weapon": CLANKFUHOTFOOT, "challenge_mode_needed": 0},
+    {"title": "An Inferno where I Tread", "description": "Purchase the Clank Fu Hot Foot 2.1 Beta Download.", "points": 5, "weapon": CLANKFUHOTFOOTUPDATE, "challenge_mode_needed": 1},
+    //{"title": "[VOID] The Spoils of Victory", "description": "Pick up the Shard Gun and Walloper then complete the first arena battle.", "points": 2, "weapon": WeaponID}, // Grouped with first arena win
+    //{"title": "[VOID] Give 'em a Good Whack", "description": "Obtain the Walloper then complete the first arena battle.", "points": 2,  "weapon": WeaponID},
+    {"title": "Dual Wieldable", "description": "Obtain the Dual Lancerators, then save the game or go to a checkpoint.", "points": 3, "weapon": LANCERATORS, "challenge_mode_needed": 0},
+    {"title": "Balls that Seek", "description": "Obtain the Mine Launcher, then save the game or go to a checkpoint.", "points": 3, "weapon": MINELAUNCHER, "challenge_mode_needed": 0},
+    {"title": "*Angry Bee Noises*", "description": "Obtain the Bee Mine Launcher Mk. II, then save the game or go to a checkpoint.", "points": 3, "weapon": BEEMINES, "challenge_mode_needed": 0},
+    {"title": "Makin' Bacon", "description": "Purchase the Pork Bomb Gun.", "points": 3, "weapon": PORKBOMB, "challenge_mode_needed": 0},
+    {"title": "No Bottles Here", "description": "Purchase the Shock Rocket.", "points": 3, "weapon": SHOCKROCKET, "challenge_mode_needed": 0},
+    {"title": "Long, Hot and Flexible", "description": "Purchase the Plasma Whip.", "points": 3, "weapon": PLASMAWHIP, "challenge_mode_needed": 0},
+    {"title": "That One Gun", "description": "Purchase the RYNO.", "points": 10, "weapon": RYNO, "challenge_mode_needed": 1},
+    {"title": "Public Display of Affection?", "description": "Obtain the Gadgetron PDA.", "points": 5, "weapon": RATCHETPDA, "challenge_mode_needed": 0},
+    {"title": "Long Distance Change Collector", "description": "Obtain Slim Cognito's Bolt Extractor.", "points": 5, "weapon": RATCHETBOLTGRABBER, "challenge_mode_needed": 0} 
+]
+
+for Weapon in WeaponUnlockListConstruct
+{
+  ChallengeModeCheck = always_true()
+  if(Weapon["challenge_mode_needed"] == 1) {
+    ChallengeModeCheck = ChallengeModeActive()
+  }
+  
+  AchievementTemplate(
+    Weapon["title"],
+    Weapon["description"],
+    Weapon["points"],
+    trigger = 
+    InGame() &&
+    ChallengeModeCheck &&
+    WeaponStats[Weapon["weapon"]]["obtained"] >= 1 &&
+    prev(WeaponStats[Weapon["weapon"]]["obtained"]) == 0 &&
+    prior(GameNotLoading())
+  )
 }
-
-// Tie-A-Rang
-AchievementTemplate(
-    WeaponUnlockListConstruct[1]["title"],
-    WeaponUnlockListConstruct[1]["description"],
-    WeaponUnlockListConstruct[1]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898f98) >= 1 &&
-    prev(byte(0x00898f98)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Cufflink Bomb
-AchievementTemplate(
-    WeaponUnlockListConstruct[2]["title"],
-    WeaponUnlockListConstruct[2]["description"],
-    WeaponUnlockListConstruct[2]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898fb0) >= 1 &&
-    prev(byte(0x00898fb0)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Blowtorch Briefcase
-AchievementTemplate(
-    WeaponUnlockListConstruct[3]["title"],
-    WeaponUnlockListConstruct[3]["description"],
-    WeaponUnlockListConstruct[3]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898ff8) >= 1 &&
-    prev(byte(0x00898ff8)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Tanglevine Carnation
-AchievementTemplate(
-    WeaponUnlockListConstruct[4]["title"],
-    WeaponUnlockListConstruct[4]["description"],
-    WeaponUnlockListConstruct[4]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898fc8) >= 1 &&
-    prev(byte(0x00898fc8)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Thunderstorm Umbrella
-AchievementTemplate(
-    WeaponUnlockListConstruct[5]["title"],
-    WeaponUnlockListConstruct[5]["description"],
-    WeaponUnlockListConstruct[5]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00899010) >= 1 &&
-    prev(byte(0x00899010)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Holo-Knuckles
-AchievementTemplate(
-    WeaponUnlockListConstruct[6]["title"],
-    WeaponUnlockListConstruct[6]["description"],
-    WeaponUnlockListConstruct[6]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898fe0) >= 1 &&
-    prev(byte(0x00898fe0)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Blackout Pen
-AchievementTemplate(
-    WeaponUnlockListConstruct[7]["title"],
-    WeaponUnlockListConstruct[7]["description"],
-    WeaponUnlockListConstruct[7]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00899028) >= 1 &&
-    prev(byte(0x00899028)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Hypno-Watch
-AchievementTemplate(
-    WeaponUnlockListConstruct[8]["title"],
-    WeaponUnlockListConstruct[8]["description"],
-    WeaponUnlockListConstruct[8]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00899040) >= 1 &&
-    prev(byte(0x00899040)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Holo-Monocle
-AchievementTemplate(
-    WeaponUnlockListConstruct[9]["title"],
-    WeaponUnlockListConstruct[9]["description"],
-    WeaponUnlockListConstruct[9]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x008990d0) >= 1 &&
-    prev(byte(0x008990d0)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Agency PDA
-AchievementTemplate(
-    WeaponUnlockListConstruct[10]["title"],
-    WeaponUnlockListConstruct[10]["description"],
-    WeaponUnlockListConstruct[10]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00899100) >= 1 &&
-    prev(byte(0x00899100)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Thermoptic Shades
-AchievementTemplate(
-    WeaponUnlockListConstruct[11]["title"],
-    WeaponUnlockListConstruct[11]["description"],
-    WeaponUnlockListConstruct[11]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x008990e8) >= 1 &&
-    prev(byte(0x008990e8)) == 0 &&
-    ChallengeModeActive() &&
-    prior(GameState()) != 0x04
-)
-
-// Jet Boots
-AchievementTemplate(
-    WeaponUnlockListConstruct[12]["title"],
-    WeaponUnlockListConstruct[12]["description"],
-    WeaponUnlockListConstruct[12]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00899190) >= 1 &&
-    prev(byte(0x00899190)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Omni-Key
-AchievementTemplate(
-    WeaponUnlockListConstruct[13]["title"],
-    WeaponUnlockListConstruct[13]["description"],
-    WeaponUnlockListConstruct[13]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x008991a8) >= 1 &&
-    prev(byte(0x008991a8)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Map O Matic (Unobtainable)
-//AchievementTemplate(
-//    WeaponUnlockListConstruct[14]["title"],
-//    WeaponUnlockListConstruct[14]["description"],
-//    WeaponUnlockListConstruct[14]["points"],
-//    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-//    byte(0x008991d8) >= 1 &&
-//    prev(byte(0x008991d8)) == 0 &&
-//    prior(GameState()) != 0x04
-//)
-
-// Bolt Grabber
-AchievementTemplate(
-    WeaponUnlockListConstruct[15]["title"],
-    WeaponUnlockListConstruct[15]["description"],
-    WeaponUnlockListConstruct[15]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x008991d8) >= 1 &&
-    prev(byte(0x008991d8)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Clank Fu Kick
-AchievementTemplate(
-    WeaponUnlockListConstruct[16]["title"],
-    WeaponUnlockListConstruct[16]["description"],
-    WeaponUnlockListConstruct[16]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00899208) >= 1 &&
-    prev(byte(0x00899208)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Hot Foot
-AchievementTemplate(
-    WeaponUnlockListConstruct[17]["title"],
-    WeaponUnlockListConstruct[17]["description"],
-    WeaponUnlockListConstruct[17]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00899220) >= 1 &&
-    prev(byte(0x00899220)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Hot Foot 2.1 Beta
-AchievementTemplate(
-    WeaponUnlockListConstruct[18]["title"],
-    WeaponUnlockListConstruct[18]["description"],
-    WeaponUnlockListConstruct[18]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00899238) >= 1 &&
-    prev(byte(0x00899238)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Shard Gun
-//AchievementTemplate(
-//    WeaponUnlockListConstruct[19]["title"],
-//    WeaponUnlockListConstruct[19]["description"],
-//    WeaponUnlockListConstruct[19]["points"],
-//    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-//    byte(0x00898ed8) >= 1 && byte(0x00898f20) >= 1 &&
-//    prev(byte(0x00898ed8)) == 0 && prev(byte(0x00898f20)) == 0 &&
-//    prior(GameState()) != 0x04
-//)
-
-// Walloper (fused with shard gun obtain to stop spam)
-//AchievementTemplate(
-//    WeaponUnlockListConstruct[20]["title"],
-//    WeaponUnlockListConstruct[20]["description"],
-//    WeaponUnlockListConstruct[20]["points"],
-//    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-//    byte(0x00898f20) >= 1 &&
-//    prev(byte(0x00898f20)) == 0 &&
-//    prior(GameState()) != 0x04
-//)
-
-// Dual Lancerators
-AchievementTemplate(
-    WeaponUnlockListConstruct[21]["title"],
-    WeaponUnlockListConstruct[21]["description"],
-    WeaponUnlockListConstruct[21]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898ec0) >= 1 &&
-    prev(byte(0x00898ec0)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Mine Launcher
-AchievementTemplate(
-    WeaponUnlockListConstruct[22]["title"],
-    WeaponUnlockListConstruct[22]["description"],
-    WeaponUnlockListConstruct[22]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898f68) >= 1 &&
-    prev(byte(0x00898f68)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Bee Mine
-AchievementTemplate(
-    WeaponUnlockListConstruct[23]["title"],
-    WeaponUnlockListConstruct[23]["description"],
-    WeaponUnlockListConstruct[23]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898ef0) >= 1 &&
-    prev(byte(0x00898ef0)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Pork Bomb Gun
-AchievementTemplate(
-    WeaponUnlockListConstruct[24]["title"],
-    WeaponUnlockListConstruct[24]["description"],
-    WeaponUnlockListConstruct[24]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898f50) >= 1 &&
-    prev(byte(0x00898f50)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Plasma Whip
-AchievementTemplate(
-    WeaponUnlockListConstruct[25]["title"],
-    WeaponUnlockListConstruct[25]["description"],
-    WeaponUnlockListConstruct[25]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898f38) >= 1 &&
-    prev(byte(0x00898f38)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Shock Rocket
-AchievementTemplate(
-    WeaponUnlockListConstruct[26]["title"],
-    WeaponUnlockListConstruct[26]["description"],
-    WeaponUnlockListConstruct[26]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898f08) >= 1 &&
-    prev(byte(0x00898f08)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// RYNO
-AchievementTemplate(
-    WeaponUnlockListConstruct[27]["title"],
-    WeaponUnlockListConstruct[27]["description"],
-    WeaponUnlockListConstruct[27]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898f80) >= 1 &&
-    prev(byte(0x00898f80)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// PDA
-AchievementTemplate(
-    WeaponUnlockListConstruct[28]["title"],
-    WeaponUnlockListConstruct[28]["description"],
-    WeaponUnlockListConstruct[28]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00899058) >= 1 &&
-    prev(byte(0x00899058)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Slims Bolt Collector
-AchievementTemplate(
-    WeaponUnlockListConstruct[29]["title"],
-    WeaponUnlockListConstruct[29]["description"],
-    WeaponUnlockListConstruct[29]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00899070) >= 1 &&
-    prev(byte(0x00899070)) == 0 &&
-    prior(GameState()) != 0x04
-)
 
 //
 // Weapon Upgrade Achievments
 //
-WeaponUpgradeListConstruct = {
-    1: {"title": "Razor Whit", "description": "Upgrade the ProtoWhirlwind Throwtie to max level, then save the game.", "points": 10},
-    2: {"title": "Mortar-fyring", "description": "Upgrade the ProtoWrist Mortar to max level, then save the game.", "points": 10},
-    3: {"title": "A Fire upon the Deep", "description": "Upgrade the ProtoHellfire Haversack to max level, then save the game.", "points": 10},
-    4: {"title": "It's Deadly Fun", "description": "Upgrade the ProtoKudzu Tangle to max level, then save the game.", "points": 10},
-    5: {"title": "Very, Very Frightening", "description": "Upgrade the ProtoLightning Rod to max level, then save the game.", "points": 10},
-    6: {"title": "Ka-pow!", "description": "Upgrade the ProtoHardlight Fist to max level, then save the game.", "points": 10},
-    7: {"title": "Broadside", "description": "Upgrade the TitanShard Cannon to max level, then save the game.", "points": 10},
-    8: {"title": "One Hell of a Punch", "description": "Upgrade the TitanMaruder to max level, then save the game.", "points": 10},
-    9: {"title": "Memories of Dreadzone", "description": "Upgrade the TitanDual Vindicators to max level, then save the game.", "points": 10},
-    10: {"title": "Mine-d Your Business", "description": "Upgrade the TitanOrdnance Launcher to max level, then save the game.", "points": 10},
-    11: {"title": "Oh Bother", "description": "Upgrade the TitanKiller Bee Mine to max level, then save the game.", "points": 10},
-    12: {"title": "Meat Lovers", "description": "Upgrade the TitanMeat Mortar to max level, then save the game.", "points": 10},
-    13: {"title": "It's Got a Lot of Kick", "description": "Upgrade the TitanShock Barrage to max level, then save the game.", "points": 10},
-    14: {"title": "Quantam Foam", "description": "Upgrade the TitanPlasma Cord to max level, then save the game.", "points": 10},
-    15: {"title": "Rip. Ya. New. One.", "description": "Upgrade the Ryno to max level, then save the game.", "points": 10}
+
+WeaponUpgradeListConstruct = [
+    {"title": "Razor Whit", "description": "Upgrade the ProtoWhirlwind Throwtie to max level, then save the game.", "points": 10, "weapon": TIEARANG},
+    {"title": "Mortar-fyring", "description": "Upgrade the ProtoWrist Mortar to max level, then save the game.", "points": 10, "weapon": CUFFLINK},
+    {"title": "A Fire upon the Deep", "description": "Upgrade the ProtoHellfire Haversack to max level, then save the game.", "points": 10, "weapon": BLOWTORCH},
+    {"title": "It's Deadly Fun", "description": "Upgrade the ProtoKudzu Tangle to max level, then save the game.", "points": 10, "weapon": TANGLEVINE},
+    {"title": "Very, Very Frightening", "description": "Upgrade the ProtoLightning Rod to max level, then save the game.", "points": 10, "weapon": UMBRELLA},
+    {"title": "Ka-pow!", "description": "Upgrade the ProtoHardlight Fist to max level, then save the game.", "points": 10, "weapon": KNUCKLES},
+    {"title": "Broadside", "description": "Upgrade the TitanShard Cannon to max level, then save the game.", "points": 10, "weapon": SHARDGUN},
+    {"title": "One Hell of a Punch", "description": "Upgrade the TitanMaruder to max level, then save the game.", "points": 10, "weapon": WALLOPER},
+    {"title": "Memories of Dreadzone", "description": "Upgrade the TitanDual Vindicators to max level, then save the game.", "points": 10, "weapon": LANCERATORS},
+    {"title": "Mine-d Your Business", "description": "Upgrade the TitanOrdnance Launcher to max level, then save the game.", "points": 10, "weapon": MINELAUNCHER},
+    {"title": "Oh Bother", "description": "Upgrade the TitanKiller Bee Mine to max level, then save the game.", "points": 10, "weapon": BEEMINES},
+    {"title": "Meat Lovers", "description": "Upgrade the TitanMeat Mortar to max level, then save the game.", "points": 10, "weapon": PORKBOMB},
+    {"title": "It's Got a Lot of Kick", "description": "Upgrade the TitanShock Barrage to max level, then save the game.", "points": 10, "weapon": SHOCKROCKET},
+    {"title": "Quantam Foam", "description": "Upgrade the TitanPlasma Cord to max level, then save the game.", "points": 10, "weapon": PLASMAWHIP},
+    {"title": "Rip. Ya. New. One.", "description": "Upgrade the Ryno to max level, then save the game.", "points": 10, "weapon": RYNO}
     
+]
+
+for Upgrade in WeaponUpgradeListConstruct
+{
+  WeaponLevels = always_true()
+  if(Upgrade["weapon"] == RYNO) {
+        WeaponLevels = WeaponStats[Upgrade["weapon"]]["level"] == 3 &&
+                       prev(WeaponStats[Upgrade["weapon"]]["level"]) <= 2
+  } else {
+        WeaponLevels = WeaponStats[Upgrade["weapon"]]["level"] == 7 &&
+                       prev(WeaponStats[Upgrade["weapon"]]["level"]) <= 6
+  }
+  AchievementTemplate(
+    Upgrade["title"],
+    Upgrade["description"],
+    Upgrade["points"],
+    trigger = 
+    InGame() &&
+    ChallengeModeActive() &&
+    WeaponLevels &&
+    prior(GameNotLoading())
+  )
 }
-
-// ProtoWhirlwind Throwtie
-AchievementTemplate(
-    WeaponUpgradeListConstruct[1]["title"],
-    WeaponUpgradeListConstruct[1]["description"],
-    WeaponUpgradeListConstruct[1]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898f84) == 7 &&
-    prev(byte(0x00898f84)) <= 6 &&
-    prior(GameState()) != 0x04
-)
-
-// ProtoWrist Mortar
-AchievementTemplate(
-    WeaponUpgradeListConstruct[2]["title"],
-    WeaponUpgradeListConstruct[2]["description"],
-    WeaponUpgradeListConstruct[2]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898f9c) == 7 &&
-    prev(byte(0x00898f9c)) <= 6 &&
-    prior(GameState()) != 0x04
-)
-
-// ProtoHellfire Haversack
-AchievementTemplate(
-    WeaponUpgradeListConstruct[3]["title"],
-    WeaponUpgradeListConstruct[3]["description"],
-    WeaponUpgradeListConstruct[3]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898fe4) == 7 &&
-    prev(byte(0x00898fe4)) <= 6 &&
-    prior(GameState()) != 0x04
-)
-
-// ProtoKudzu Tangle
-AchievementTemplate(
-    WeaponUpgradeListConstruct[4]["title"],
-    WeaponUpgradeListConstruct[4]["description"],
-    WeaponUpgradeListConstruct[4]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898fb4) == 7 &&
-    prev(byte(0x00898fb4)) <= 6 &&
-    prior(GameState()) != 0x04
-)
-
-// ProtoLightning Rod
-AchievementTemplate(
-    WeaponUpgradeListConstruct[5]["title"],
-    WeaponUpgradeListConstruct[5]["description"],
-    WeaponUpgradeListConstruct[5]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898ffc) == 7 &&
-    prev(byte(0x00898ffc)) <= 6 &&
-    prior(GameState()) != 0x04
-)
-
-// ProtoHardlight Fist
-AchievementTemplate(
-    WeaponUpgradeListConstruct[6]["title"],
-    WeaponUpgradeListConstruct[6]["description"],
-    WeaponUpgradeListConstruct[6]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898fcc) == 7 &&
-    prev(byte(0x00898fcc)) <= 6 &&
-    prior(GameState()) != 0x04
-)
-
-// TitanShard Cannon
-AchievementTemplate(
-    WeaponUpgradeListConstruct[7]["title"],
-    WeaponUpgradeListConstruct[7]["description"],
-    WeaponUpgradeListConstruct[7]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898ec4) == 7 &&
-    prev(byte(0x00898ec4)) <= 6 &&
-    prior(GameState()) != 0x04
-)
-
-// TitanMaruder
-AchievementTemplate(
-    WeaponUpgradeListConstruct[8]["title"],
-    WeaponUpgradeListConstruct[8]["description"],
-    WeaponUpgradeListConstruct[8]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898f0c) == 7 &&
-    prev(byte(0x00898f0c)) <= 6 &&
-    prior(GameState()) != 0x04
-)
-
-// TitanDual Vindicators
-AchievementTemplate(
-    WeaponUpgradeListConstruct[9]["title"],
-    WeaponUpgradeListConstruct[9]["description"],
-    WeaponUpgradeListConstruct[9]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898eac) == 7 &&
-    prev(byte(0x00898eac)) <= 6 &&
-    prior(GameState()) != 0x04
-)
-
-// TitanOrdanence Launcher
-AchievementTemplate(
-    WeaponUpgradeListConstruct[10]["title"],
-    WeaponUpgradeListConstruct[10]["description"],
-    WeaponUpgradeListConstruct[10]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898f54) == 7 &&
-    prev(byte(0x00898f54)) <= 6 &&
-    prior(GameState()) != 0x04
-)
-
-// TitanKiller Bee Mine
-AchievementTemplate(
-    WeaponUpgradeListConstruct[11]["title"],
-    WeaponUpgradeListConstruct[11]["description"],
-    WeaponUpgradeListConstruct[11]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898edc) == 7 &&
-    prev(byte(0x00898edc)) <= 6 &&
-    prior(GameState()) != 0x04
-)
-
-// TitanMeat Mortar
-AchievementTemplate(
-    WeaponUpgradeListConstruct[12]["title"],
-    WeaponUpgradeListConstruct[12]["description"],
-    WeaponUpgradeListConstruct[12]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898f3c) == 7 &&
-    prev(byte(0x00898f3c)) <= 6 &&
-    prior(GameState()) != 0x04
-)
-
-// TitanShock Barrage
-AchievementTemplate(
-    WeaponUpgradeListConstruct[13]["title"],
-    WeaponUpgradeListConstruct[13]["description"],
-    WeaponUpgradeListConstruct[13]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898f0c) == 7 &&
-    prev(byte(0x00898f0c)) <= 6 &&
-    prior(GameState()) != 0x04
-)
-
-// TitanPlasma Coil
-AchievementTemplate(
-    WeaponUpgradeListConstruct[14]["title"],
-    WeaponUpgradeListConstruct[14]["description"],
-    WeaponUpgradeListConstruct[14]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898f24) == 7 &&
-    prev(byte(0x00898f24)) <= 6 &&
-    prior(GameState()) != 0x04
-)
-
-// RYNO
-AchievementTemplate(
-    WeaponUpgradeListConstruct[15]["title"],
-    WeaponUpgradeListConstruct[15]["description"],
-    WeaponUpgradeListConstruct[15]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898f6c) == 3 &&
-    prev(byte(0x00898f6c)) <= 2 &&
-    prior(GameState()) != 0x04
-)
 
 //
 // Weapon Mod Achievements
 //
-WeaponModListConstruct = {
-    1: {"title": "Inductive!", "description": "Purchase the Molten Bolt mod.", "points": 5},
-    2: {"title": "Capacitive!", "description": "Purchase all the Lightning Rod mods.", "points": 5},
-    3: {"title": "Piece of Mind", "description": "Obtain all the Shard Gun mods.", "points": 5},
-    4: {"title": "Earthed Strike", "description": "Obtain all the Walloper mods.", "points": 5},
-    5: {"title": "Dualie Noted", "description": "Purchase all the Dual Lancerator mods.", "points": 5},
-    6: {"title": "Major Seekage", "description": "Purchase all the Mine Launcher mods.", "points": 5},
-    7: {"title": "The Bee Does Not Care What Others Think", "description": "Obtain all the Bee Mine Glove mods.", "points": 5},
-    8: {"title": "Butchers Delight", "description": "Purchase all the Pork Bomb Gun mods.", "points": 5},
-    9: {"title": "The Fourth State of Kickass", "description": "Purchase all the Plasma Whip mods.", "points": 5},
-    10: {"title": "EMP and Dynamite", "description": "Purchase all the Shock Rocket mods.", "points": 5}
+WeaponModListConstruct = [
+    {"title": "Inductive!", "description": "Purchase the Molten Bolt mod.", "points": 5, "weapon": BLOWTORCH, "single_mod": 1},
+    {"title": "Capacitive!", "description": "Purchase all the Lightning Rod mods.", "points": 5, "weapon": UMBRELLA, "single_mod": 0},
+    {"title": "Piece of Mind", "description": "Obtain all the Shard Gun mods.", "points": 5, "weapon": SHARDGUN, "single_mod": 0},
+    {"title": "Earthed Strike", "description": "Obtain all the Walloper mods.", "points": 5, "weapon": WALLOPER, "single_mod": 0},
+    {"title": "Dualie Noted", "description": "Purchase all the Dual Lancerator mods.", "points": 5, "weapon": LANCERATORS, "single_mod": 0},
+    {"title": "Major Seekage", "description": "Purchase all the Mine Launcher mods.", "points": 5, "weapon": MINELAUNCHER, "single_mod": 0},
+    {"title": "The Bee Does Not Care What Others Think", "description": "Obtain all the Bee Mine Glove mods.", "points": 5, "weapon": BEEMINES, "single_mod": 0},
+    {"title": "Butchers Delight", "description": "Purchase all the Pork Bomb Gun mods.", "points": 5, "weapon": PORKBOMB, "single_mod": 0},
+    {"title": "The Fourth State of Kickass", "description": "Purchase all the Plasma Whip mods.", "points": 5, "weapon": PLASMAWHIP, "single_mod": 0},
+    {"title": "EMP and Dynamite", "description": "Purchase all the Shock Rocket mods.", "points": 5, "weapon": SHOCKROCKET, "single_mod": 0}
+]
+
+for Mod in WeaponModListConstruct
+{
+  Mods = always_true()
+  if(Mod["single_mod"] == 1) {
+        Mods = WeaponStats[Mod["weapon"]]["level"] == 1 &&
+               prev(WeaponStats[Mod["weapon"]]["level"]) == 0
+  } else {
+        Mods = WeaponStats[Mod["weapon"]]["mod1"] == 1 && WeaponStats[Mod["weapon"]]["mod2"] == 1  &&
+               (prev(WeaponStats[Mod["weapon"]]["mod1"]) == 0 || prev(WeaponStats[Mod["weapon"]]["mod2"]) == 0)
+  }
+  AchievementTemplate(
+    Mod["title"],
+    Mod["description"],
+    Mod["points"],
+    trigger = 
+    InGame() &&
+    ChallengeModeActive() &&
+    Mods &&
+    prior(GameNotLoading())
+  )
 }
-
-// Molten Bolt
-AchievementTemplate(
-    WeaponModListConstruct[1]["title"],
-    WeaponModListConstruct[1]["description"],
-    WeaponModListConstruct[1]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00898ff0) == 1 &&
-    prev(byte(0x00898ff0)) == 0 &&
-    prior(GameState()) != 0x04
-)
-
-// Lightning Rod
-AchievementTemplate(
-    WeaponModListConstruct[2]["title"],
-    WeaponModListConstruct[2]["description"],
-    WeaponModListConstruct[2]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    ChallengeModeActive() &&
-    byte(0x00899008) == 1 && byte(0x00899009) == 1 &&
-    (prev(byte(0x00899008)) == 0 || prev(byte(0x00899009)) == 0) &&
-    prior(GameState()) != 0x04
-)
-
-// Shard Gun
-AchievementTemplate(
-    WeaponModListConstruct[3]["title"],
-    WeaponModListConstruct[3]["description"],
-    WeaponModListConstruct[3]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898ed0) == 1 && byte(0x00898ed1) == 1 &&
-    (prev(byte(0x00898ed0)) == 0 || prev(byte(0x00898ed1)) == 0) &&
-    prior(GameState()) != 0x04
-)
-
-// Walloper
-AchievementTemplate(
-    WeaponModListConstruct[4]["title"],
-    WeaponModListConstruct[4]["description"],
-    WeaponModListConstruct[4]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898f18) == 1 && byte(0x00898f19) == 1 &&
-    (prev(byte(0x00898f18)) == 0 || prev(byte(0x00898f19)) == 0) &&
-    prior(GameState()) != 0x04
-)
-
-// Dual Lancerators
-AchievementTemplate(
-    WeaponModListConstruct[5]["title"],
-    WeaponModListConstruct[5]["description"],
-    WeaponModListConstruct[5]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898eb8) == 1 && byte(0x00898eb9) == 1 &&
-    (prev(byte(0x00898eb8)) == 0 || prev(byte(0x00898eb9)) == 0) &&
-    prior(GameState()) != 0x04
-)
-
-// Mine Launcher
-AchievementTemplate(
-    WeaponModListConstruct[6]["title"],
-    WeaponModListConstruct[6]["description"],
-    WeaponModListConstruct[6]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898f60) == 1 && byte(0x00898f61) == 1 &&
-    (prev(byte(0x00898f60)) == 0 || prev(byte(0x00898f61)) == 0) &&
-    prior(GameState()) != 0x04
-)
-
-// Bee Mine Glove
-AchievementTemplate(
-    WeaponModListConstruct[7]["title"],
-    WeaponModListConstruct[7]["description"],
-    WeaponModListConstruct[7]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898ee8) == 1 && byte(0x00898ee9) == 1 &&
-    (prev(byte(0x00898ee8)) == 0 || prev(byte(0x00898ee9)) == 0) &&
-    prior(GameState()) != 0x04
-)
-
-// Pork Bomb Glove
-AchievementTemplate(
-    WeaponModListConstruct[8]["title"],
-    WeaponModListConstruct[8]["description"],
-    WeaponModListConstruct[8]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898f48) == 1 && byte(0x00898f49) == 1 &&
-    (prev(byte(0x00898f48)) == 0 || prev(byte(0x00898f49)) == 0) &&
-    prior(GameState()) != 0x04
-)
-
-// Plasma Whip
-AchievementTemplate(
-    WeaponModListConstruct[9]["title"],
-    WeaponModListConstruct[9]["description"],
-    WeaponModListConstruct[9]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898f30) == 1 && byte(0x00898f31) == 1 &&
-    (prev(byte(0x00898f30)) == 0 || prev(byte(0x00898f31)) == 0) &&
-    prior(GameState()) != 0x04
-)
-
-// Shock Rocket
-AchievementTemplate(
-    WeaponModListConstruct[10]["title"],
-    WeaponModListConstruct[10]["description"],
-    WeaponModListConstruct[10]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    byte(0x00898f00) == 1 && byte(0x00898f01) == 1 &&
-    (prev(byte(0x00898f00)) == 0 || prev(byte(0x00898f01)) == 0) &&
-    prior(GameState()) != 0x04
-)
-
 
 //
 // Wrench Mod Achievements
@@ -1088,32 +566,35 @@ AchievementTemplate(
     MiscCheevosListConstruct[1]["title"],
     MiscCheevosListConstruct[1]["description"],
     MiscCheevosListConstruct[1]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    prior(GameState()) != 0x04 &&
-    StageID() != 0x00 &&
-    prev(dword(0x008ee568)) < 5000000 &&
-    dword(0x008ee568) >= 5000000
+    trigger = 
+    InGame() &&
+    prior(GameNotLoading()) &&
+    StageID() != MAIN_MENU &&
+    prev(BoltCount) < 5000000 &&
+    dword(BoltCount) >= 5000000
 )
 
 AchievementTemplate(
     MiscCheevosListConstruct[2]["title"],
     MiscCheevosListConstruct[2]["description"],
     MiscCheevosListConstruct[2]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    StageID() != 0x00 &&
-    prev(byte(0x008edbcd)) < 12 &&
-    byte(0x008edbcd) == 12
+    trigger =
+    InGame() &&
+    StageID() != MAIN_MENU &&
+    prev(BoltMultiplier) < 12 &&
+    BoltMultiplier == 12
 )
 
 AchievementTemplate(
     MiscCheevosListConstruct[3]["title"],
     MiscCheevosListConstruct[3]["description"],
     MiscCheevosListConstruct[3]["points"],
-    trigger = (GameState() == 0x0b || GameState() == 0x08) &&
-    StageID() == 0x1f &&
-    bitcount(0x008edc2a) == 3 &&
-    prev(byte(0x008edc4b)) == 0 &&
-    byte(0x008edc4b) == 1
+    trigger = 
+    InGame() &&
+    StageID() == HIG_TREEHOUSE &&
+    AllKeyCards() &&
+    prev(DallasChalice) == 0 &&
+    DallasChalice == 1
 )
 
 //
@@ -1515,7 +996,7 @@ AchievementTemplate(
     "Visit the HIG Treehouse after collecting all of the Alien Codes.",
     25,
     trigger =
-    (GameState() == 0x0b || GameState() == 0x08) &&
+    InGame() &&
     ChallengeModeActive() &&
     StageID() == 0x1f &&
     SumAlienCodes() == 27    
@@ -1554,7 +1035,7 @@ SkinListConstruct = {
 
 function SkinUnlock(offset, bit) {
     return
-    (GameState() == 0x0b || GameState() == 0x08) &&
+    InGame() &&
     StageID() != 0x00 &&
     GameState() != 0x04 &&
     CheckBit(offset, bit) > prev(CheckBit(offset, bit))
