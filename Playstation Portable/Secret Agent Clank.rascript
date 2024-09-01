@@ -123,6 +123,10 @@ DallasChalice = byte(0x008edc4b)
 BoltCount = dword(0x008ee568)
 BoltMultiplier = byte(0x008edbcd)
 CurrentWrench = byte(0x008edc4c)
+ClankCurrentWeapon = word(0x906FA4)
+RatchetCurrentWeapon = word(0x906F70)
+CurrentCharacter = byte(0x854CC0)
+CurrentStage = byte(0x008ee56c)
 
 
 // Create address list for challenges, progression etc
@@ -819,44 +823,48 @@ RatchetWeaponLookup = {
 }
 
 rp_bolt_count = rich_presence_value("Number", BoltCount)
+rp_clank_weapon = rich_presence_lookup("ClankWeapon", ClankCurrentWeapon, ClankWeaponLookup, fallback="Kung Fu")
+rp_ratchet_weapon = rich_presence_lookup("RatchetWeapon", RatchetCurrentWeapon, RatchetWeaponLookup)
+rp_current_character = rich_presence_lookup("Character", CurrentCharacter, CharacterLookup)
+rp_current_stage = rich_presence_lookup("Stage", CurrentStage, StageLookup)
 
-rich_presence_conditional_display(byte(0x854CC0) == 0 && byte(0x8EE56C) == 0, "In the main menu")
+rich_presence_conditional_display(CurrentCharacter == 0 && CurrentStage == 0, "In the main menu")
 
-rich_presence_conditional_display(byte(0x854CC0) == 8 && byte(0x8EE56C) == 4, "Gadgebots | Rooftop Deathtrap | Bolts: {0}",
-    rich_presence_value("Number", word(0x8EE568))
+rich_presence_conditional_display(CurrentCharacter == 8 && CurrentStage == 4, "Gadgebots | Rooftop Deathtrap | Bolts: {0}",
+    rp_bolt_count
 )
 
-rich_presence_conditional_display(byte(0x854CC0) == 1 && byte(0x8EE56C) == 4, "Clank | Asyanica Rooftops | Bolts: {0} | Equipped: {1}",
-    rich_presence_value("Number", word(0x8EE568)),
-    rich_presence_lookup("ClankWeapon", word(0x906FA4), ClankWeaponLookup, fallback="Kung Fu")
+rich_presence_conditional_display(CurrentCharacter == 1 && CurrentStage == 4, "Clank | Asyanica Rooftops | Bolts: {0} | Equipped: {1}",
+    rp_bolt_count,
+    rp_clank_weapon
 )
 
-rich_presence_conditional_display(byte(0x854CC0) == 1 && byte(0x8EE56C) == 11, "Clank | Gondola Ascent | Bolts: {0} | Equipped: {1}",
-    rich_presence_value("Number", word(0x8EE568)),
-    rich_presence_lookup("ClankWeapon", word(0x906FA4), ClankWeaponLookup, fallback="Kung Fu")
+rich_presence_conditional_display(CurrentCharacter == 1 && CurrentStage == 11, "Clank | Gondola Ascent | Bolts: {0} | Equipped: {1}",
+    rp_bolt_count,
+    rp_clank_weapon
 )
 
-rich_presence_conditional_display(byte(0x854CC0) == 4 && byte(0x8EE56C) == 11, "Qwark | Suck and Jive | Bolts: {0}",
-    rich_presence_value("Number", word(0x8EE568))
+rich_presence_conditional_display(CurrentCharacter == 4 && CurrentStage == 11, "Qwark | Suck and Jive | Bolts: {0}",
+    rp_bolt_count
 )
 
-rich_presence_conditional_display(byte(0x854CC0) == 0, "{0} | {1} | Bolts: {2} | Equipped: {3}",
-    rich_presence_lookup("Character", word(0x854CC0), CharacterLookup),
-    rich_presence_lookup("Stage", word(0x8EE56C), StageLookup),
-    rich_presence_value("Number", word(0x8EE568)),
-    rich_presence_lookup("RatchetWeapon", word(0x906F70), RatchetWeaponLookup)
+rich_presence_conditional_display(CurrentCharacter == 0, "{0} | {1} | Bolts: {2} | Equipped: {3}",
+    rp_current_character,
+    rp_current_stage,
+    rp_bolt_count,
+    rp_ratchet_weapon
 )
 
-rich_presence_conditional_display(byte(0x854CC0) == 1, "{0} | {1} | Bolts: {2} | Equipped: {3}",
-    rich_presence_lookup("Character", word(0x854CC0), CharacterLookup),
-    rich_presence_lookup("Stage", word(0x8EE56C), StageLookup),
-    rich_presence_value("Number", word(0x8EE568)),
-    rich_presence_lookup("ClankWeapon", word(0x906FA4), ClankWeaponLookup, fallback="Kung Fu")
+rich_presence_conditional_display(CurrentCharacter == 1, "{0} | {1} | Bolts: {2} | Equipped: {3}",
+    rp_current_character,
+    rp_current_stage,
+    rp_bolt_count,
+    rp_clank_weapon
 )
 
 rich_presence_display("{0} | {1} | Bolts: {2} | Equipped: {3}",
-    rich_presence_lookup("Character", word(0x854CC0), CharacterLookup),
-    rich_presence_lookup("Stage", word(0x8EE56C), StageLookup),
-    rich_presence_value("Number", word(0x8EE568)),
-    rich_presence_lookup("ClankWeapon", word(0x906FA4), ClankWeaponLookup, fallback="Kung Fu")
+    rp_current_character,
+    rp_current_stage,
+    rp_bolt_count,
+    rp_clank_weapon
 )
