@@ -619,49 +619,33 @@ achievement(
 //
 // Titanium Bolt Achievements
 //
-TitaniumBoltList = [
-    0x008edba8, 0x008edba9, 0x008edbac, 0x008edbad, 0x008edbae, 0x008edbaf, 0x008edbb1, 0x008edbb2, 0x008edbb4, 0x008edbb6
-]
+TitaniumBolts = 0x008edba8
 
 TitaniumBoltListConstruct = [
-    {"title": "These Belong in a...Wait a Minute", "description": "Obtain all the Titanium Bolts on Boltair.", "points": 10, "stage": BOLTAIRE_MUSEUM, "multi_stage": 0, "offset": 0, "bits": [0, 1], "total": 2},
-    {"title": "Who Leaves Change This High Up?", "description": "Obtain the Titanium Bolt on the Asyanica Rooftops.", "points": 5, "stage": ASYANICA, "multi_stage": 0, "offset": 0, "bits": [4], "total": 1},
-    {"title": "Tourists Will Lose Anything", "description": "Obtain all the Titanium Bolts on Rionosis.", "points": 10, "stage": AZCOTAL_ALLEY, "multi_stage": 1, "offset": 1, "bits": [], "total": 4},
-    {"title": "Now These Are Real Chips", "description": "Obtain the Titanium Bolt in the High-Rollers Casino.", "points": 5, "stage": CASINO, "multi_stage": 0, "offset": 1, "bits": [0], "total": 1},
-    {"title": "Experimental Currency", "description": "Obtain all the Titanium Bolts on Vanantonio.", "points": 10, "stage": VENANTONIO_LABS, "multi_stage": 0, "offset": 1, "bits": [4, 5], "total": 2},
-    {"title": "Straight from the Source", "description": "Obtain all the Titanium Bolts in Fort Sprocket.", "points": 10, "stage": BOLT_RESERVE, "multi_stage": 0, "offset": 2, "bits": [0, 1, 2], "total": 3},
-    {"title": "Prison Dosh", "description": "Obtain all the Titanium Bolts on the Prison Planet.", "points": 10, "stage": 0, "multi_stage": 2, "offset": 0, "bits": [], "total": 5},
-    {"title": "Graverobbing", "description": "Obtain all the Titanium Bolts in the Spaceship Graveyard.", "points": 10, "stage": SPACESHIP_GRAVEYARD, "multi_stage": 0, "offset": 0, "bits": [4, 5, 6, 7], "total": 4},
-    {"title": "Stealing from the Villan", "description": "Obtain the Titanium Bolt on Hydrano.", "points": 5, "stage": UNDERWATER_BUNKER, "multi_stage": 0, "offset": 2, "bits": [0], "total": 1},
+    {"title": "These Belong in a...Wait a Minute", "description": "Obtain all the Titanium Bolts on Boltair.", "points": 10, "stages": [BOLTAIRE_MUSEUM], "bits": [0, 1]},
+    {"title": "Who Leaves Change This High Up?", "description": "Obtain the Titanium Bolt on the Asyanica Rooftops.", "points": 5, "stages": [ASYANICA], "bits": [12]},
+    {"title": "Tourists Will Lose Anything", "description": "Obtain all the Titanium Bolts on Rionosis.", "points": 10, "stages": [AZCOTAL_ALLEY, GONDOLA_AND_JIVE], "bits": [36, 37, 38, 40]},
+    {"title": "Now These Are Real Chips", "description": "Obtain the Titanium Bolt in the High-Rollers Casino.", "points": 5, "stages": [CASINO], "bits": [48]},
+    {"title": "Experimental Currency", "description": "Obtain all the Titanium Bolts on Vanantonio.", "points": 10, "stages": [VENANTONIO_LABS], "bits": [60, 61]},
+    {"title": "Straight from the Source", "description": "Obtain all the Titanium Bolts in Fort Sprocket.", "points": 10, "stages": [BOLT_RESERVE], "bits": [72, 73, 74]},
+    {"title": "Prison Dosh", "description": "Obtain all the Titanium Bolts on the Prison Planet.", "points": 10, "stages": [MAX_SECURITY_CELLS, MESS_HALL, EXERCISE_YARD, THE_SHOWERS, PRISON_BREAKOUT], "bits": [8, 32, 52, 80, 96]},
+    {"title": "Graverobbing", "description": "Obtain all the Titanium Bolts in the Spaceship Graveyard.", "points": 10, "stages": [SPACESHIP_GRAVEYARD], "bits": [84, 85, 86, 87]},
+    {"title": "Stealing from the Villain", "description": "Obtain the Titanium Bolt on Hydrano.", "points": 5, "stages": [UNDERWATER_BUNKER], "bits": [112]}
 ]
 
-
-
-for i in range(0, length(TitaniumBoltListConstruct) -1) {
-    TitaniumBolt = TitaniumBoltListConstruct[i]
-    if(TitaniumBolt["multi_stage"] == 1) {
-        Stage = __ornext(StageID() == AZCOTAL_ALLEY || StageID() == GONDOLA_AND_JIVE)
-        Sum = CheckBit(TitaniumBoltList[2], 4) + CheckBit(TitaniumBoltList[2], 5) + CheckBit(TitaniumBoltList[2], 6) + CheckBit(TitaniumBoltList[3], 0) == TitaniumBolt["total"]
-        PrevSum = prev(CheckBit(TitaniumBoltList[2], 4) + CheckBit(TitaniumBoltList[2], 5) + CheckBit(TitaniumBoltList[2], 6) + CheckBit(TitaniumBoltList[3], 0) == TitaniumBolt["total"] - 1)
-    } else if(TitaniumBolt["multi_stage"] == 2) {
-        Stage = __ornext((StageID() == 0x03 || StageID() == 0x09 || StageID() == 0x0e || StageID() == 0x15 || StageID() == 0x19))
-        Sum = CheckBit(TitaniumBoltList[1], 0) + CheckBit(TitaniumBoltList[2], 0) + CheckBit(TitaniumBoltList[4], 4) + CheckBit(TitaniumBoltList[7], 0) + CheckBit(TitaniumBoltList[8], 0)== TitaniumBolt["total"]
-        PrevSum = prev(CheckBit(TitaniumBoltList[1], 0) + CheckBit(TitaniumBoltList[2], 0) + CheckBit(TitaniumBoltList[4], 4) + CheckBit(TitaniumBoltList[7], 0) + CheckBit(TitaniumBoltList[8], 0) == TitaniumBolt["total"] - 1)
-    } else {
-        Stage = StageID() == TitaniumBolt["stage"]
-        Sum = sum_of(TitaniumBolt["bits"], b => CheckBit(TitaniumBoltList[i] + TitaniumBolt["offset"], b)) == TitaniumBolt["total"]
-        PrevSum = prev(sum_of(TitaniumBolt["bits"], b => CheckBit(TitaniumBoltList[i] + TitaniumBolt["offset"], b)) == TitaniumBolt["total"] - 1)
-    }
-    AchievementTemplate(
-        TitaniumBolt["title"],
-        TitaniumBolt["description"],
-        TitaniumBolt["points"],
-        trigger =
+for TitaniumBolt in TitaniumBoltListConstruct
+{
+  numBolts = length(TitaniumBolt["bits"])
+  AchievementTemplate(
+    TitaniumBolt["title"],
+    TitaniumBolt["description"],
+    TitaniumBolt["points"],
+    trigger=
         InGame() &&
-        Stage &&
-        Sum &&
-        PrevSum
-    )
+        __ornext(any_of(TitaniumBolt["stages"], s => s == StageID())) &&
+        sum_of(TitaniumBolt["bits"], b => CheckBit(TitaniumBolts, b)) == numBolts &&
+        sum_of(TitaniumBolt["bits"], b => prev(CheckBit(TitaniumBolts, b))) == numBolts - 1
+  )
 }
 
 // 
