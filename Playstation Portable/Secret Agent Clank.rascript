@@ -17,7 +17,7 @@ function CheckBit(offset, b) {
     bit(b % 8, offset + b / 8)
 }
 
-// GameState | 0x02 is the saving state flag, while the save and load screens look the same the flag is different
+// GameState | 0x05 is the saving state flag, while the save and load screens look the same the flag is different
 //           | 0x04 is the loading state flag
 //           | 0x08 is used then the level initially loads and no other load operation occurs such as the open world levels
 //           | 0x0b is used when a challenge is loaded from a menu within a level such as Max-Security Cells
@@ -830,34 +830,34 @@ rp_ratchet_weapon = rich_presence_lookup("RatchetWeapon", RatchetCurrentWeapon, 
 rp_current_character = rich_presence_lookup("Character", CurrentCharacter, CharacterLookup)
 rp_current_stage = rich_presence_lookup("Stage", CurrentStage, StageLookup)
 
-rich_presence_conditional_display(CurrentCharacter == 0 && CurrentStage == 0, "In the main menu")
+rich_presence_conditional_display(CurrentCharacter == RATCHET && CurrentStage == MAIN_MENU, "In the main menu")
 
-rich_presence_conditional_display(CurrentCharacter == 8 && CurrentStage == 4, "Gadgebots | Rooftop Deathtrap | Bolts: {0}",
+rich_presence_conditional_display(CurrentCharacter == GADGEBOTS && CurrentStage == ASYANICA, "Gadgebots | Rooftop Deathtrap | Bolts: {0}",
     rp_bolt_count
 )
 
-rich_presence_conditional_display(CurrentCharacter == 1 && CurrentStage == 4, "Clank | Asyanica Rooftops | Bolts: {0} | Equipped: {1}",
+rich_presence_conditional_display(CurrentCharacter == CLANK && CurrentStage == ASYANICA, "Clank | Asyanica Rooftops | Bolts: {0} | Equipped: {1}",
     rp_bolt_count,
     rp_clank_weapon
 )
 
-rich_presence_conditional_display(CurrentCharacter == 1 && CurrentStage == 11, "Clank | Gondola Ascent | Bolts: {0} | Equipped: {1}",
+rich_presence_conditional_display(CurrentCharacter == CLANK && CurrentStage == GONDOLA_AND_JIVE, "Clank | Gondola Ascent | Bolts: {0} | Equipped: {1}",
     rp_bolt_count,
     rp_clank_weapon
 )
 
-rich_presence_conditional_display(CurrentCharacter == 4 && CurrentStage == 11, "Qwark | Suck and Jive | Bolts: {0}",
+rich_presence_conditional_display(CurrentCharacter == QWARK && CurrentStage == GONDOLA_AND_JIVE, "Qwark | Suck and Jive | Bolts: {0}",
     rp_bolt_count
 )
 
-rich_presence_conditional_display(CurrentCharacter == 0, "{0} | {1} | Bolts: {2} | Equipped: {3}",
+rich_presence_conditional_display(CurrentCharacter == RATCHET, "{0} | {1} | Bolts: {2} | Equipped: {3}",
     rp_current_character,
     rp_current_stage,
     rp_bolt_count,
     rp_ratchet_weapon
 )
 
-rich_presence_conditional_display(CurrentCharacter == 1, "{0} | {1} | Bolts: {2} | Equipped: {3}",
+rich_presence_conditional_display(CurrentCharacter == CLANK, "{0} | {1} | Bolts: {2} | Equipped: {3}",
     rp_current_character,
     rp_current_stage,
     rp_bolt_count,
