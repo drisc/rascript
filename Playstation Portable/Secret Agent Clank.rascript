@@ -225,7 +225,7 @@ CinematicsListConstruct = [
     {"title": "I Never Learned to Drive Stick", "description": "Catch up to the Kingpin in the Spaceship Graveyard.", "points": 3, "offset": CinematicsList[6], "bit": 1, "stage": SPACESHIP_GRAVEYARD, "cheevotype": "progression", "id": 432522},
     {"title": "Spacenuns and Orphans", "description": "Defeat the All-seeing SpaceEye.", "points": 3, "offset": CinematicsList[6], "bit": 3, "stage": SAINT_QWARK, "cheevotype": "progression", "id": 432523},
     {"title": "The Iron Giant", "description": "Find your ship after flying through the Quasar Fields.", "points": 3, "offset": CinematicsList[7], "bit": 0, "stage": QUASAR_FIELDS, "cheevotype": "progression", "id": 432524},
-    {"title": "Clanks' Incredible Car", "description": "Discover the location of Klunk's lair.", "points": 3, "offset": CinematicsList[7], "bit": 2, "stage": DAMS_EDGE, "cheevotype": "progression", "id": 432491},
+    {"title": "Clank's Incredible Car", "description": "Discover the location of Klunk's lair.", "points": 3, "offset": CinematicsList[7], "bit": 2, "stage": DAMS_EDGE, "cheevotype": "progression", "id": 432491},
     {"title": "Down to His Skivvies", "description": "\"Save\" the dam and then take a dip.", "points": 3, "offset": CinematicsList[7], "bit": 4, "stage": FICTION_FULL_OF_DOLLARS, "cheevotype": "progression", "id": 432525},
     {"title": "Evil Suck-Vac 3000", "description": "Witness Klunk's ultimate fate.", "points": 25, "offset": CinematicsList[1], "bit": 1, "stage": KLUNK_BOSS_ARENA, "cheevotype": "win_condition", "id": 432526},
 ]
@@ -340,7 +340,7 @@ WeaponUnlockListConstruct = [
     {"title": "Attractive, for a Robot", "description": "Purchase the Bolt Grabber.", "points": 3, "weapon": CLANKBOLTGRABBER, "challenge_mode_needed": 0, "id": 432533},
     {"title": "Fleet Feet", "description": "Purchase the Clank Fu Kick.", "points": 3, "weapon": CLANKFUKICK, "challenge_mode_needed": 0, "id": 432497}, // Actual clank fu kick
     {"title": "A Fire in my Sole", "description": "Purchase the Clank Fu Hot Foot Download.", "points": 4, "weapon": CLANKFUHOTFOOT, "challenge_mode_needed": 0, "id": 432574},
-    {"title": "An Inferno where I Tread", "description": "Purchase the Clank Fu Hot Foot 2.1 Beta Download.", "points": 5, "weapon": CLANKFUHOTFOOTUPDATE, "challenge_mode_needed": 1, "id": 432575},
+    {"title": "An Inferno Where I Tread", "description": "Purchase the Clank Fu Hot Foot 2.1 Beta Download.", "points": 5, "weapon": CLANKFUHOTFOOTUPDATE, "challenge_mode_needed": 1, "id": 432575},
     //{"title": "[VOID] The Spoils of Victory", "description": "Pick up the Shard Gun and Walloper then complete the first arena battle.", "points": 2, "weapon": WeaponID}, // Grouped with first arena win
     //{"title": "[VOID] Give 'em a Good Whack", "description": "Obtain the Walloper then complete the first arena battle.", "points": 2,  "weapon": WeaponID},
     {"title": "Dual Wieldable", "description": "Obtain the Dual Lancerators, then save the game or go to a checkpoint.", "points": 3, "weapon": LANCERATORS, "challenge_mode_needed": 0, "id": 432576},
@@ -493,7 +493,7 @@ for Wrench in WrenchUnlockListConstruct
 MiscCheevosListConstruct = {
     1: {"title": "Jingling Pockets", "description": "Carry 5,000,000 bolts at once.", "points": 25, "id": 432539},
     2: {"title": "Multiplicative Gains", "description": "Reach a bolt multiplyer of 12.", "points": 10, "id": 432602},
-    3: {"title": "Who Is Dallas?", "description": "Find all three keycards and aquire a very powerful cup.", "points": 10, "id": 432603}
+    3: {"title": "Who Is Dallas?", "description": "Find all three keycards and acquire a very powerful cup.", "points": 10, "id": 432603}
 }
 
 AchievementTemplate(
@@ -542,7 +542,7 @@ SkillPointsList = CreateAddrList(0x008edb98, 9)
 
 SkillPointsListConstruct = [
     {"title": "Furious Fists of Fury", "description": "Use only melee attacks to complete Boltair Museum.", "points": 5, "offset": SkillPointsList[0], "bit": 0, "stage": BOLTAIRE_MUSEUM, "id": 432504},
-    {"title": "Silent Night", "description": "Defeat every possible guard in Boltair Museum using stealth takedowns. ", "points": 10, "offset": SkillPointsList[0], "bit": 1, "stage": BOLTAIRE_MUSEUM, "id": 432604},
+    {"title": "Silent Night", "description": "Defeat every possible guard in Boltaire Museum using stealth takedowns. ", "points": 10, "offset": SkillPointsList[0], "bit": 1, "stage": BOLTAIRE_MUSEUM, "id": 432604},
     {"title": "Pyrrhic Victory", "description": "Get damaged on the very last segment of the Gem Wing rhythm minigame.", "points": 5, "offset": SkillPointsList[0], "bit": 2, "stage": BOLTAIRE_GEM_WING, "id": 432605},
     {"title": "Triple Platinum Record", "description": "Get through the whole Gem Wing rhythm minigame without missing any button presses.", "points": 10, "offset": SkillPointsList[0], "bit": 3, "stage": BOLTAIRE_GEM_WING, "id": 432606},
     {"title": "Stainless Steel", "description": "Take no damage during the Mega Challenge in the Max-Security Cells.", "points": 5, "offset": SkillPointsList[0], "bit": 4, "stage": MAX_SECURITY_CELLS, "id": 432607},
@@ -561,8 +561,8 @@ SkillPointsListConstruct = [
     {"title": "Empty the Warrens", "description": "Kill 89 tyhrranoids during \"Tyhrranoid Recycling\".", "points": 5, "offset": SkillPointsList[2], "bit": 1, "stage": MESS_HALL, "id": 432616},
     {"title": "Antaeus", "description": "Complete \"Mega Challenge: Cafeteria\" without jumping.", "points": 5, "offset": SkillPointsList[2], "bit": 2, "stage": MESS_HALL, "id": 432617},
     {"title": "Master of Disguise", "description": "Use all 8 of the disguises at the tourist carts in the mission \"All the Kingpin's Men\".", "points": 5, "offset": SkillPointsList[2], "bit": 3, "stage": AZCOTAL_ALLEY, "id": 432507},
-    {"title": "Trash Talk", "description": "Kill all of Kingpin's guards by luring them with a trash can.", "points": 5, "offset": SkillPointsList[2], "bit": 4, "stage": AZCOTAL_ALLEY, "id": 432618},
-    {"title": "Deadly Hands", "description": "Kill all of Kingpin's guards before reaching the fourth tourist cart.", "points": 10, "offset": SkillPointsList[2], "bit": 5, "stage": AZCOTAL_ALLEY, "id": 432542},
+    {"title": "Trash Talk", "description": "Kill all of Kingpin's guards by luring them with a trash can in the mission \"All the Kingpin's Men\".", "points": 5, "offset": SkillPointsList[2], "bit": 4, "stage": AZCOTAL_ALLEY, "id": 432618},
+    {"title": "Deadly Hands", "description": "Kill all of Kingpin's guards before reaching the fourth tourist cart in \"All the Kingpins's Men\".", "points": 10, "offset": SkillPointsList[2], "bit": 5, "stage": AZCOTAL_ALLEY, "id": 432542},
     {"title": "Steel Rain", "description": "Smack 10 henchbots off of the gondolas in the mission \"Get a Lift\".", "points": 5, "offset": SkillPointsList[2], "bit": 6, "stage": GONDOLA_AND_JIVE, "id": 432619},
     {"title": "52 Card Pickup", "description": "Only use melee attacks or his own cards to defeat Jack of All Trades.", "points": 10, "offset": SkillPointsList[2], "bit": 7, "stage": GONDOLA_AND_JIVE, "id": 432620},
     {"title": "Dress for Success", "description": "Hit Jack of All Trades with his own hat three times.", "points": 5, "offset": SkillPointsList[3], "bit": 0, "stage": GONDOLA_AND_JIVE, "id": 432621},
@@ -580,28 +580,28 @@ SkillPointsListConstruct = [
     {"title": "Twinkle Toes", "description": "Get 5 butterfly bounces in a row during \"Madame Butterqwark\".", "points": 5, "offset": SkillPointsList[4], "bit": 4, "stage": BUTTERQWARK, "id": 432629},
     {"title": "Magnum Opus", "description": "Complete \"Madame Butterqwark\" without taking damage.", "points": 10, "offset": SkillPointsList[4], "bit": 5, "stage": BUTTERQWARK, "id": 432510},
     {"title": "Sold Out", "description": "Get a score of 150,000 or higher during \"Madame Butterqwark\".", "points": 10, "offset": SkillPointsList[4], "bit": 6, "stage": BUTTERQWARK, "id": 432630},
-    {"title": "With Interest", "description": "Kill 5 Static Midges with friendly fire from Bolt Thieves.", "points": 5, "offset": SkillPointsList[4], "bit": 7, "stage": BOLT_RESERVE, "id": 432631},
+    {"title": "With Interest", "description": "Kill 5 Static Midges with friendly fire from Bolt Thieves at Fort Sprocket.", "points": 5, "offset": SkillPointsList[4], "bit": 7, "stage": BOLT_RESERVE, "id": 432631},
     {"title": "Androids in Disguise", "description": "Stealth kill two disguised Doppelgangers in Fort Sprocket while being disguised as a Doppelganger.", "points": 5, "offset": SkillPointsList[5], "bit": 0, "stage": BOLT_RESERVE, "id": 432632},
     {"title": "Vault Vault", "description": "Complete the \"Vaultbreakers\" challenge in under 8 minutes and 25 seconds.", "points": 10, "offset": SkillPointsList[5], "bit": 1, "stage": A_EYE, "id": 432633},
     {"title": "El Dia de los Muertos", "description": "Have all three Gadgebots wear Static Midge helmets at the same time during \"Vaultbreakers\".", "points": 5, "offset": SkillPointsList[5], "bit": 2, "stage": A_EYE, "id": 432545},
-    {"title": "Ruba-Dub Club", "description": "Kill the Amoeboid King using only the OmniWrench.", "points": 10, "offset": SkillPointsList[5], "bit": 3, "stage": THE_SHOWERS, "id": 432511},
+    {"title": "Ruba-Dub Club", "description": "Kill the Amoeboid King using only the OmniWrench during \"No good deed goes unpunished\".", "points": 10, "offset": SkillPointsList[5], "bit": 3, "stage": THE_SHOWERS, "id": 432511},
     {"title": "Modesty", "description": "Complete \"Mega Challenge: Shower\" without taking damage.", "points": 10, "offset": SkillPointsList[5], "bit": 4, "stage": THE_SHOWERS, "id": 432634},
     {"title": "It's a Delicacy Somewhere", "description": "Destroy all the Sargasso spores during \"Tracking the Kingpin\".", "points": 5, "offset": SkillPointsList[5], "bit": 5, "stage": SPACESHIP_GRAVEYARD, "id": 432635},
-    {"title": "Revenant", "description": "Destroy every enemy in the Salvage Yard before the final door opens without being seen.", "points": 10, "offset": SkillPointsList[5], "bit": 6, "stage": SPACESHIP_GRAVEYARD, "id": 432636},
-    {"title": "Punchy", "description": "Defeat all pirates using only punches.", "points": 10, "offset": SkillPointsList[5], "bit": 7, "stage": SAINT_QWARK, "id": 432637},
-    {"title": "Sour Victory", "description": "Kill the Kudzu Monster using only lemons.", "points": 10, "offset": SkillPointsList[6], "bit": 0, "stage": SAINT_QWARK, "id": 432638},
-    {"title": "Min-Maxing", "description": "Score 1,075 points in the Giant Clank level (1,550 in Challenge Mode).", "points": 5, "offset": SkillPointsList[6], "bit": 1, "stage": QUASAR_FIELDS, "id": 432512},
+    {"title": "Revenant", "description": "Destroy every enemy in the Salvage Yard before the final door opens without being seen in the Spaceship Graveyard.", "points": 10, "offset": SkillPointsList[5], "bit": 6, "stage": SPACESHIP_GRAVEYARD, "id": 432636},
+    {"title": "Punchy", "description": "Defeat all pirates using only punches in \"Saint Qwark\".", "points": 10, "offset": SkillPointsList[5], "bit": 7, "stage": SAINT_QWARK, "id": 432637},
+    {"title": "Sour Victory", "description": "Kill the Kudzu Monster using only lemons in \"Saint Qwark\".", "points": 10, "offset": SkillPointsList[6], "bit": 0, "stage": SAINT_QWARK, "id": 432638},
+    {"title": "Min-Maxing", "description": "Score 1,075 points in \"Escape the Kudzu\" (1,550 in Challenge Mode).", "points": 5, "offset": SkillPointsList[6], "bit": 1, "stage": QUASAR_FIELDS, "id": 432512},
     {"title": "I Kill the Rock", "description": "Kill all 3 MegaRock-class dreadnoughts.", "points": 10, "offset": SkillPointsList[6], "bit": 2, "stage": QUASAR_FIELDS, "id": 432546},
     {"title": "Whip It Good", "description": "Get 40 kills with the Plasma Whip or Plasma Chord during any Prison Breakout challenge.", "points": 5, "offset": SkillPointsList[6], "bit": 3, "stage": PRISON_BREAKOUT, "id": 432639},
     {"title": "Hanging Judge", "description": "Don't let any prisoners escape during \"Mega Challenge: Battle Royale\".", "points": 10, "offset": SkillPointsList[6], "bit": 4, "stage": PRISON_BREAKOUT, "id": 432640},
     {"title": "Yeeee Haaaaaw!", "description": "Perform a roll after jumping off a cliff in one of the Hydrano vehicle challenges.", "points": 2, "offset": SkillPointsList[6], "bit": 5, "stage": DAMS_EDGE, "id": 432641},
     {"title": "Offensive Driver", "description": "Complete the \"Rush Hour\" challenge with at least 60 seconds remaining.", "points": 5, "offset": SkillPointsList[6], "bit": 6, "stage": DAMS_EDGE, "id": 432642},
-    {"title": "Slippery Slope", "description": "Hit 5 oil slicks without dying.", "points": 5, "offset": SkillPointsList[6], "bit": 7, "stage": DAMS_EDGE, "id": 432513},
+    {"title": "Slippery Slope", "description": "Hit 5 oil slicks without dying in the one of the Hydrano vehicle challenges.", "points": 5, "offset": SkillPointsList[6], "bit": 7, "stage": DAMS_EDGE, "id": 432513},
     {"title": "Ring around the Rosie", "description": "Collect all the rings in the \"Driving Test\" challenge.", "points": 5, "offset": SkillPointsList[7], "bit": 0, "stage": DAMS_EDGE, "id": 432643},
-    {"title": "He Cleans Pools, Too!", "description": "Kill 20 enemies with a single lawnmower.", "points": 10, "offset": SkillPointsList[7], "bit": 1, "stage": FICTION_FULL_OF_DOLLARS, "id": 432547},
+    {"title": "He Cleans Pools, Too!", "description": "Kill 20 enemies with a single lawnmower in \"A Fiction Full of Dollars!\".", "points": 10, "offset": SkillPointsList[7], "bit": 1, "stage": FICTION_FULL_OF_DOLLARS, "id": 432547},
     {"title": "Perfect Mirror", "description": "Complete \"A Fiction Full of Dollars!\" without the dam taking any damage.", "points": 10, "offset": SkillPointsList[7], "bit": 2, "stage": FICTION_FULL_OF_DOLLARS, "id": 432644},
     {"title": "Cereal Decoder Ring", "description": "Complete \"Knockin' on Klunk's Door\" in under 4 minutes and 30 seconds.", "points": 10, "offset": SkillPointsList[7], "bit": 3, "stage": BULKHEAD_LOCK, "id": 432645},
-    {"title": "l33t h4xx0r", "description": "Don't fail any OmniKey puzzles.", "points": 5, "offset": SkillPointsList[7], "bit": 4, "stage": UNDERWATER_BUNKER, "id": 432646},
+    {"title": "l33t h4xx0r", "description": "Don't fail any OmniKey puzzles during \"Clank under Glass\".", "points": 5, "offset": SkillPointsList[7], "bit": 4, "stage": UNDERWATER_BUNKER, "id": 432646},
     {"title": "Rust Proof", "description": "Don't fall in the water at any point during \"Clank under Glass\".", "points": 5, "offset": SkillPointsList[7], "bit": 5, "stage": UNDERWATER_BUNKER, "id": 432514},
     {"title": "I'm Not There", "description": "Complete \"Clank under Glass\" without being spotted by any enemies, fish, or lasers.", "points": 5, "offset": SkillPointsList[7], "bit": 6, "stage": UNDERWATER_BUNKER, "id": 432647},
     {"title": "Turn the Tables", "description": "Perform 4 successful takedowns in a row on Klunk during \"All the Marbles\".", "points": 10, "offset": SkillPointsList[7], "bit": 7, "stage": KLUNK_BOSS_ARENA, "id": 432648},
@@ -626,7 +626,7 @@ achievement(
     points = 50,
     id = 432649,
     trigger = InGame() &&
-    sum_of(SkillPointsList, addr => bitcount(addr)) == 65 &&
+    measured(sum_of(SkillPointsList, addr => bitcount(addr)) == 65) &&
     prev(sum_of(SkillPointsList, addr => bitcount(addr))) == 64
 )
 
@@ -658,7 +658,7 @@ for TitaniumBolt in TitaniumBoltListConstruct
     trigger=
         InGame() &&
         __ornext(any_of(TitaniumBolt["stages"], s => s == StageID())) &&
-        sum_of(TitaniumBolt["bits"], b => CheckBit(TitaniumBolts, b)) == numBolts &&
+        measured(sum_of(TitaniumBolt["bits"], b => CheckBit(TitaniumBolts, b)) == numBolts) &&
         sum_of(TitaniumBolt["bits"], b => prev(CheckBit(TitaniumBolts, b))) == numBolts - 1
   )
 }
@@ -693,7 +693,7 @@ for i in range(0, length(AlienCodeList) -1)
         StageID() == Code["stage"] &&
         ChallengeModeActive() &&
         ThermOpticShadesObtained() &&
-        sum_of(Code["bits"], b => CheckBit(AlienCodeList[i], b)) == 3 &&
+        measured(sum_of(Code["bits"], b => CheckBit(AlienCodeList[i], b)) == 3) &&
         sum_of(Code["bits"], b => prev(CheckBit(AlienCodeList[i], b))) == 2
     )
 }
@@ -719,10 +719,11 @@ SkinList = CreateAddrList(0x00907074, 3)
 SkinListConstruct = [
     //{"title": "Prison Scrubs Ratchet", "description": "Unlock the Prison Scrubs Ratchet skin.", "points": 3, "offset": SkinList[0], "bit": 0, "id": },
     {"title": "Lombaxxx", "description": "Unlock the Towel Ratchet skin.", "points": 3, "offset": SkinList[0], "bit": 1, "id": 432551},
-    {"title": "Hang 6!", "description": "Unlock the Tropical Vacation skin by importing a Ratchet & Clank: Size Matters save file.", "points": 1, "offset": SkinList[0], "bit": 2, "id": 432518},
-    {"title": "Ratchetzilla", "description": "Unlock the Ratchetzilla skin by importing a Ratchet & Clank: Size Matters save file.", "points": 1, "offset": SkinList[0], "bit": 3, "id": 432664},
-    {"title": "Quest of Booty", "description": "Unlock the Plundering Pirate Captain skin by importing a Ratchet & Clank: Size Matters save file.", "points": 1, "offset": SkinList[0], "bit": 4, "id": 432668},
-    {"title": "Intergalactic Lombax of Mystery", "description": "Unlock the Super Incognito Skin by importing a Ratchet & Clank: Size Matters save file.", "points": 1, "offset": SkinList[0], "bit": 5, "id": 432669},
+    {"title": "Prior Heroics", "description": "Unlock several skins by importing a Ratchet & Clank: Size Matters save file.", "points": 1, "offset": SkinList[0], "bit": 2, "id": 460813},
+    //{"title": "[VOID] Hang 6!", "description": "Unlock the Tropical Vacation skin by importing a Ratchet & Clank: Size Matters save file.", "points": 1, "offset": SkinList[0], "bit": 2, "id": 432518},
+    //{"title": "[VOID] Ratchetzilla", "description": "Unlock the Ratchetzilla skin by importing a Ratchet & Clank: Size Matters save file.", "points": 1, "offset": SkinList[0], "bit": 3, "id": 432664},
+    //{"title": "[VOID] Quest of Booty", "description": "Unlock the Plundering Pirate Captain skin by importing a Ratchet & Clank: Size Matters save file.", "points": 1, "offset": SkinList[0], "bit": 4, "id": 432668},
+    //{"title": "[VOID] Intergalactic Lombax of Mystery", "description": "Unlock the Super Incognito Skin by importing a Ratchet & Clank: Size Matters save file.", "points": 1, "offset": SkinList[0], "bit": 5, "id": 432669},
     {"title": "Robo-Hero", "description": "Unlock the Robo-Ratchet skin.", "points": 3, "offset": SkinList[0], "bit": 6, "id": 432670},
     {"title": "I Know Clank-Fu", "description": "Unlock the Kung Fu Ratchet skin.", "points": 3, "offset": SkinList[0], "bit": 7, "id": 432519},
     {"title": "Rotten Lombax", "description": "Unlock the Zombie Ratchet skin.", "points": 3, "offset": SkinList[1], "bit": 0, "id": 432653},
