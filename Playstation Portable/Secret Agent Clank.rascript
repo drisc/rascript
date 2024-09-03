@@ -492,7 +492,7 @@ for Wrench in WrenchUnlockListConstruct
 //
 MiscCheevosListConstruct = {
     1: {"title": "Jingling Pockets", "description": "Carry 5,000,000 bolts at once.", "points": 25, "id": 432539},
-    2: {"title": "Multiplicative Gains", "description": "Reach a bolt multiplyer of 12.", "points": 10, "id": 432602},
+    2: {"title": "Multiplicative Gains", "description": "Reach a bolt multiplier of 12.", "points": 10, "id": 432602},
     3: {"title": "Who Is Dallas?", "description": "Find all three keycards and acquire a very powerful cup.", "points": 10, "id": 432603}
 }
 
