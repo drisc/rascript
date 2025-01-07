@@ -530,8 +530,7 @@ AchievementTemplate(
     InGame() &&
     StageID() == HIG_TREEHOUSE &&
     AllKeyCards() &&
-    prev(DallasChalice) == 0 &&
-    DallasChalice == 1
+    DallasChalice > prev(DallasChalice)
 )
 
 //
