@@ -220,14 +220,14 @@ CinematicsListConstruct = [
     {"title": "Ace up the Sleeve", "description": "Acquire the co-ordinates to the Casino.", "points": 3, "offset": CinematicsList[3], "bit": 2, "stage": GONDOLA_AND_JIVE, "cheevotype": "progression", "id": 432487},
     {"title": "Publisher's Notes?", "description": "Defeat Jack of All Trades.", "points": 3, "offset": CinematicsList[3], "bit": 4, "stage": GONDOLA_AND_JIVE, "cheevotype": "progression", "id": 432488},
     {"title": "An Exchange of Quips", "description": "Acquire the co-ordinates to Venantonio.", "points": 3, "offset": CinematicsList[4], "bit": 3, "stage": HIGH_STAKES_ROOM, "cheevotype": "progression", "id": 432489},
-    {"title": "Beam Me Up", "description": "Acquire the co-ordinates to the Bolt Foundry.", "points": 3, "offset": CinematicsList[5], "bit": 3, "stage": VENANTONIO_LABS, "cheevotype": "progression", "id": 432490},
+    {"title": "Beam Me Up", "description": "Acquire the co-ordinates to the Bolt Foundry.", "points": 3, "offset": CinematicsList[5], "bit": 3, "stage": VENANTONIO_CANALS, "cheevotype": "progression", "id": 432490},
     {"title": "Good ol' Marv", "description": "Sing your heart out on Venantonio.", "points": 3, "offset": CinematicsList[5], "bit": 5, "stage": BUTTERQWARK, "cheevotype": "progression", "id": 432521},
     {"title": "I Never Learned to Drive Stick", "description": "Catch up to the Kingpin in the Spaceship Graveyard.", "points": 3, "offset": CinematicsList[6], "bit": 1, "stage": SPACESHIP_GRAVEYARD, "cheevotype": "progression", "id": 432522},
     {"title": "Spacenuns and Orphans", "description": "Defeat the All-seeing SpaceEye.", "points": 3, "offset": CinematicsList[6], "bit": 3, "stage": SAINT_QWARK, "cheevotype": "progression", "id": 432523},
-    {"title": "The Iron Giant", "description": "Find your ship after flying through the Quasar Fields.", "points": 3, "offset": CinematicsList[7], "bit": 0, "stage": QUASAR_FIELDS, "cheevotype": "progression", "id": 432524},
+    {"title": "The Iron Giant", "description": "Find your ship after flying through the Quasar Fields.", "points": 3, "offset": CinematicsList[7], "bit": 0, "stage": PRISON_BREAKOUT, "cheevotype": "progression", "id": 432524},
     {"title": "Clank's Incredible Car", "description": "Discover the location of Klunk's lair.", "points": 3, "offset": CinematicsList[7], "bit": 2, "stage": DAMS_EDGE, "cheevotype": "progression", "id": 432491},
     {"title": "Down to His Skivvies", "description": "\"Save\" the dam and then take a dip.", "points": 3, "offset": CinematicsList[7], "bit": 4, "stage": FICTION_FULL_OF_DOLLARS, "cheevotype": "progression", "id": 432525},
-    {"title": "Evil Suck-Vac 3000", "description": "Witness Klunk's ultimate fate.", "points": 25, "offset": CinematicsList[1], "bit": 1, "stage": KLUNK_BOSS_ARENA, "cheevotype": "win_condition", "id": 432526},
+    {"title": "Evil Suck-Vac 3000", "description": "Witness Klunk's ultimate fate.", "points": 25, "offset": CinematicsList[8], "bit": 3, "stage": KLUNK_BOSS_ARENA, "cheevotype": "win_condition", "id": 432526},
 ]
 
 for Cinematic in CinematicsListConstruct {
@@ -253,10 +253,10 @@ ChallengesCompleteListConstruct = [
     {"title": "From Brushing Teeth to Smashing Them", "description": "Survive Ratchet's first day in prison and obtain the Fire Wrench mod, Walloper, and Shard Gun.", "points": 5, "offset": ChallengesList[0], "bit": 0, "stage": MAX_SECURITY_CELLS, "cheevotype": "progression", "id": 432527},
     {"title": "Messy Eaters", "description": "Live through the lunch rush in the Mess Hall.", "points": 3, "offset": ChallengesList[1], "bit": 0, "stage": MESS_HALL, "cheevotype": "progression", "id": 432528},
     {"title": "Playtime!", "description": "Make it through your Prison Yard time.", "points": 3, "offset": ChallengesList[2], "bit": 0, "stage": EXERCISE_YARD, "cheevotype": "progression", "id": 432677},
-    {"title": "De-Briefing", "description": "Preserve your modesty in The Showers.", "points": 3, "offset": ChallengesList[3], "bit": 0, "stage": THE_SHOWERS, "cheevotype": "progression", "id": 432492},
+    {"title": "De-Briefing", "description": "Preserve your modesty in The Showers and obtain the PDA.", "points": 3, "offset": ChallengesList[3], "bit": 0, "stage": THE_SHOWERS, "cheevotype": "progression", "id": 432492},
     {"title": "Catch Me If You Can!", "description": "Prevent the prisoners from escaping!", "points": 3, "offset": ChallengesList[4], "bit": 0, "stage": PRISON_BREAKOUT, "cheevotype": "progression", "id": 432678},
     {"title": "The Porcupine Has Eaten the Snowman", "description": "Free Clank from the vault at the Bolt Foundry.", "points": 5, "offset": ChallengesList[5], "bit": 0, "stage": A_EYE, "cheevotype": "progression", "id": 432555},
-    {"title": "Cold Call Bots", "description": "Find a way around the door in Klunk's lair.", "points": 3, "offset": ChallengesList[5], "bit": 0, "stage": BULKHEAD_LOCK, "cheevotype": "progression", "id": 432556},
+    {"title": "Cold Call Bots", "description": "Find a way around the door in Klunk's lair.", "points": 3, "offset": ChallengesList[6], "bit": 0, "stage": BULKHEAD_LOCK, "cheevotype": "progression", "id": 432556},
 ]
 
 for Challenge in ChallengesCompleteListConstruct {
@@ -295,7 +295,7 @@ ChallengeListConstruct = [
     {"title": "Don't Drop the Soap", "description": "Complete all the arena challenges in The Showers.", "points": 5, "stage": THE_SHOWERS, "challenge_list": TheShowersChallenges, "id": 432493},
     {"title": "The Great Escape in Spaaaaace!", "description": "Complete all the arena challenges during the Prison Breakout.", "points": 5, "stage": PRISON_BREAKOUT, "challenge_list": PrisonBreakoutChallenges, "id": 432559},
     {"title": "Small Bots, Big City", "description": "Complete all the Gadgebot challenges on Asyanica.", "points": 5, "stage": ASYANICA, "challenge_list": GadgebotAsyanicaChallenges, "id": 432560},
-    {"title": "Tiny Heist", "description": "Complete all the Gadgebot challenges at Fort Sprocket.", "points": 5, "stage": BOLT_RESERVE, "challenge_list": GadgebotBoltReserveChallenges, "id": 432561},
+    {"title": "Tiny Heist", "description": "Complete all the Gadgebot challenges at Fort Sprocket.", "points": 5, "stage": A_EYE, "challenge_list": GadgebotBoltReserveChallenges, "id": 432561},
     {"title": "Bots in a Bubble", "description": "Complete all the Gadgebot challenges at the Underwater Bunker.", "points": 5, "stage": BULKHEAD_LOCK, "challenge_list": GadgeBotBunkerChallenges, "id": 432562},
     {"title": "Extreme Sports Mode Activated", "description": "Complete all the snowboard challenges on Glaciara.", "points": 5, "stage": GLACIARA, "challenge_list": SnowboardingChallenges, "id": 432494},
     {"title": "Turning the Tide", "description": "Complete all the boating challenges on Venantonio.", "points": 5, "stage": VENANTONIO_CANALS, "challenge_list": BoatingChallenges, "id": 432571},
