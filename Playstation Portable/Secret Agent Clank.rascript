@@ -350,7 +350,7 @@ WeaponUnlockListConstruct = [
     {"title": "No Bottles Here", "description": "Purchase the Shock Rocket.", "points": 3, "weapon": SHOCKROCKET, "challenge_mode_needed": 0, "id": 432534},
     {"title": "Long, Hot and Flexible", "description": "Purchase the Plasma Whip.", "points": 3, "weapon": PLASMAWHIP, "challenge_mode_needed": 0, "id": 432579},
     {"title": "That One Gun", "description": "Purchase the RYNO.", "points": 10, "weapon": RYNO, "challenge_mode_needed": 1, "id": 432580},
-    {"title": "Public Display of Affection?", "description": "Obtain the Gadgetron PDA.", "points": 5, "weapon": RATCHETPDA, "challenge_mode_needed": 0, "id": 432581},
+    //{"title": "[VOID] Public Display of Affection?", "description": "Obtain the Gadgetron PDA.", "points": 5, "weapon": RATCHETPDA, "challenge_mode_needed": 0, "id": 432581},
     {"title": "Long Distance Change Collector", "description": "Obtain Slim Cognito's Bolt Extractor.", "points": 5, "weapon": RATCHETBOLTGRABBER, "challenge_mode_needed": 0, "id": 432582} 
 ]
 
