@@ -478,12 +478,11 @@ for Wrench in WrenchUnlockListConstruct
       Wrench["points"],
       Wrench["id"],
       trigger =
-      InGame() &&
       PlayTime() > 0 &&
+      InGame() &&
       CurrentCharacter() == RATCHET &&
       CurrentWrench == Wrench["wrench"] &&
-      (prev(CurrentWrench) != Wrench["wrench"]) &&
-      prior(GameNotLoading())
+      (prev(CurrentWrench) != Wrench["wrench"])
     )
 }
 
