@@ -442,10 +442,14 @@ for Mod in WeaponModListConstruct
   Mods = always_true()
   if(Mod["single_mod"] == 1) {
         Mods = WeaponStats[Mod["weapon"]]["mod1"] == 1 &&
-               prev(WeaponStats[Mod["weapon"]]["mod1"]) == 0
+               prev(WeaponStats[Mod["weapon"]]["mod1"]) == 0 &&
+               prev(WeaponStats[Mod["weapon"]]["obtained"]) == 1
   } else {
-        Mods = WeaponStats[Mod["weapon"]]["mod1"] == 1 && WeaponStats[Mod["weapon"]]["mod2"] == 1  &&
-               __ornext(prev(WeaponStats[Mod["weapon"]]["mod1"]) == 0 || prev(WeaponStats[Mod["weapon"]]["mod2"]) == 0)
+        Mods = WeaponStats[Mod["weapon"]]["mod1"] == 1 &&
+               WeaponStats[Mod["weapon"]]["mod2"] == 1 &&
+               __ornext(prev(WeaponStats[Mod["weapon"]]["mod1"] == 0) ||
+                        prev(WeaponStats[Mod["weapon"]]["mod2"] == 0)) &&
+               prev(WeaponStats[Mod["weapon"]]["obtained"]) == 1
   }
   AchievementTemplate(
     Mod["title"],
@@ -453,10 +457,7 @@ for Mod in WeaponModListConstruct
     Mod["points"],
     Mod["id"],
     trigger = 
-    InGame() &&
-    ChallengeModeActive() &&
-    Mods &&
-    prior(GameNotLoading())
+    Mods
   )
 }
 
