@@ -626,6 +626,12 @@ function Opp6Health() => byte(0x02c98e)
 //Array of offsets
 BadgeOffsetArray = [ 0x937C, 0x937D ]
 
+function SumOfBadges()
+{
+    BadgeSum = bitcount(Pointer() + 0x937D) - bit7(Pointer() + 0x937D) + bit7(Pointer() + 0x937C)
+    return BadgeSum
+}
+
 // Check Player is in game
 function PlayerInGame() => InGameCheck() != 0
 function PlayerNotInGame() => InGameCheck() == 0
@@ -634,252 +640,240 @@ function PlayerNotInGame() => InGameCheck() == 0
 function PointerNotNull() => Pointer() != 0
 
 // Catchable Pokemon List
-
-StarterList = 
-{
-    1: {"title": "Treecko", "description": "Obtain a Poochyena", "points": 1, "id": 252, "badges": 0},
-    2: {"title": "Grovyle", "description": "Obtain a Poochyena", "points": 2, "id": 253, "badges": 0},
-    3: {"title": "Sceptile", "description": "Obtain a Poochyena", "points": 3, "id": 254, "badges": 0},
-    4: {"title": "Torchic", "description": "Obtain a Poochyena", "points": 1, "id": 255, "badges": 0},
-    5: {"title": "Combusken", "description": "Obtain a Poochyena", "points": 2, "id": 256, "badges": 0},
-    6: {"title": "Blaziken", "description": "Obtain a Poochyena", "points": 3, "id": 257, "badges": 0},
-    7: {"title": "Mudkip", "description": "Obtain a Poochyena", "points": 1, "id": 258, "badges": 0},
-    8: {"title": "Marshtomp", "description": "Obtain a Marshtomp", "points": 2, "id": 259, "badges": 0},
-    9: {"title": "Swampert", "description": "Obtain a Swampert", "points": 3, "id": 260, "badges": 0}
-}
-
+// "badges" = exact badge count the Pokemon must be obtained with (8 = after Winona / post-game)
 CatchableList =
 {  
-    1: {"title": "Poochyena", "description": "Obtain a Poochyena", "points": 1, "id": 261, "badges": 0},
-    2: {"title": "Mightyena", "description": "Obtain a Mightyena", "points": 2, "id": 262, "badges": 0},
-    3: {"title": "Zigzagoon", "description": "Obtain a Zigzagoon", "points": 1, "id": 263, "badges": 0},
-    4: {"title": "Linoone", "description": "Obtain a Linoone", "points": 2, "id": 264, "badges": 0},
-    5: {"title": "Wurmple", "description": "Obtain a Wurmple", "points": 1, "id": 265, "badges": 0},
-    6: {"title": "Silcoon", "description": "Obtain a Silcoon", "points": 2, "id": 266, "badges": 0},
-    7: {"title": "Beautifly", "description": "Obtain a Beautifly", "points": 3, "id": 267, "badges": 0},
-    8: {"title": "Cascoon", "description": "Obtain a Cascoon", "points": 2, "id": 268, "badges": 0},
-    9: {"title": "Dustox", "description": "Obtain a Dustox", "points": 3, "id": 269, "badges": 0},
-    10: {"title": "Lotad", "description": "Obtain a Lotad", "points": 1, "id": 270, "badges": 0},
-    11: {"title": "Lombre", "description": "Obtain a Lombre", "points": 2, "id": 271, "badges": 0},
-    12: {"title": "Ludicolo", "description": "Obtain a Ludicolo", "points": 3, "id": 272, "badges": 6},
-    13: {"title": "Seedot", "description": "Obtain a Seedot", "points": 1, "id": 273, "badges": 0},
-    14: {"title": "Nuzleaf", "description": "Obtain a Nuzleaf", "points": 2, "id": 274, "badges": 0},
-    15: {"title": "Shiftry", "description": "Obtain a Shiftry", "points": 3, "id": 275, "badges": 6},
-    16: {"title": "Tailow", "description": "Obtain a Tailow", "points": 1, "id": 276, "badges": 0},
-    17: {"title": "Swellow", "description": "Obtain a Swellow", "points": 2, "id": 277, "badges": 0},
-    18: {"title": "Wingull", "description": "Obtain a Wingull", "points": 1, "id": 278, "badges": 0},
-    19: {"title": "Pelipper", "description": "Obtain a Pelipper", "points": 2, "id": 279, "badges": 0},
-    20: {"title": "Ralts", "description": "Obtain a Ralts", "points": 1, "id": 280, "badges": 0},
-    21: {"title": "Kirlia", "description": "Obtain a Kirlia", "points": 2, "id": 281, "badges": 0},
-    22: {"title": "Gardevoir", "description": "Obtain a Gardevoir", "points": 3, "id": 282, "badges": 0},
-    23: {"title": "Shroomish", "description": "Obtain a Shroomish", "points": 1, "id": 285, "badges": 0},
-    24: {"title": "Breloom", "description": "Obtain a Breloom", "points": 2, "id": 286, "badges": 0},
-    25: {"title": "Slakoth", "description": "Obtain a Slakoth", "points": 1, "id": 287, "badges": 0},
-    26: {"title": "Vigoroth", "description": "Obtain a Vigoroth", "points": 2, "id": 288, "badges": 0},
-    27: {"title": "Slaking", "description": "Obtain a Slaking", "points": 3, "id": 289, "badges": 0},
-    28: {"title": "Abra", "description": "Obtain an Abra", "points": 1, "id": 63, "badges": 0},
-    29: {"title": "Kadabra", "description": "Obtain a Kadabra", "points": 2, "id": 64, "badges": 0},
-    30: {"title": "Nincada", "description": "Obtain a Nincada", "points": 1, "id": 290, "badges": 0},
-    31: {"title": "Ninjask", "description": "Obtain a Ninjask", "points": 2, "id": 291, "badges": 0},
-    32: {"title": "Shedinja", "description": "Obtain a Shedinja", "points": 2, "id": 292, "badges": 0},
-    33: {"title": "Whismur", "description": "Obtain a Whismur", "points": 1, "id": 293, "badges": 0},
-    34: {"title": "Loudred", "description": "Obtain a Loudred", "points": 2, "id": 294, "badges": 0},
-    35: {"title": "Exploud", "description": "Obtain an Exploud", "points": 3, "id": 295, "badges": 0},
-    36: {"title": "Makuhita", "description": "Obtain a Makuhita", "points": 1, "id": 296, "badges": 1},
-    37: {"title": "Hariyama", "description": "Obtain a Hariyama", "points": 2, "id": 297, "badges": 1},
-    38: {"title": "Goldeen", "description": "Obtain a Goldeen", "points": 1, "id": 118, "badges": 1},
-    39: {"title": "Seaking", "description": "Obtain a Seaking", "points": 2, "id": 119, "badges": 1},
-    40: {"title": "Magikarp", "description": "Obtain a Magikarp", "points": 1, "id": 129, "badges": 1},
-    41: {"title": "Gyarados", "description": "Obtain a Gyarados", "points": 2, "id": 130, "badges": 1},
-    42: {"title": "Azurill", "description": "Obtain an Azurill", "points": 1, "id": 298, "badges": 5},
-    43: {"title": "Marill", "description": "Obtain a Marill", "points": 2, "id": 183, "badges": 0},
-    44: {"title": "Azumarill", "description": "Obtain an Azumarill", "points": 3, "id": 184, "badges": 0},
-    45: {"title": "Geodude", "description": "Obtain a Geodude", "points": 1, "id": 74, "badges": 1},
-    46: {"title": "Graveler", "description": "Obtain a Graveler", "points": 2, "id": 75, "badges": 1},
-    47: {"title": "Nosepass", "description": "Obtain a Nosepass", "points": 1, "id": 299, "badges": 2},
-    48: {"title": "Skitty", "description": "Obtain a Skitty", "points": 1, "id": 300, "badges": 0},
-    49: {"title": "Delcatty", "description": "Obtain a Delcatty", "points": 2, "id": 301, "badges": 2},
-    50: {"title": "Zubat", "description": "Obtain a Zubat", "points": 1, "id": 41, "badges": 1},
-    51: {"title": "Golbat", "description": "Obtain a Golbat", "points": 2, "id": 42, "badges": 1},
-    52: {"title": "Crobat", "description": "Obtain a Crobat", "points": 3, "id": 169, "badges": 1},
-    53: {"title": "Tentacool", "description": "Obtain a Tentacool", "points": 1, "id": 72, "badges": 1},
-    54: {"title": "Tentacruel", "description": "Obtain a Tentacruel", "points": 2, "id": 73, "badges": 1},
-    55: {"title": "Sableye", "description": "Obtain a Sableye", "points": 1, "id": 302, "badges": 1},
-    56: {"title": "Mawile", "description": "Obtain a Mawile", "points": 1, "id": 303, "badges": 7},
-    57: {"title": "Aron", "description": "Obtain an Aron", "points": 1, "id": 304, "badges": 1},
-    58: {"title": "Lairon", "description": "Obtain a Lairon", "points": 2, "id": 305, "badges": 1},
-    59: {"title": "Aggron", "description": "Obtain an Aggron", "points": 3, "id": 306, "badges": 1},
-    60: {"title": "Machop", "description": "Obtain a Machop", "points": 1, "id": 66, "badges": 2},
-    61: {"title": "Machoke", "description": "Obtain a Machoke", "points": 2, "id": 67, "badges": 2},
-    62: {"title": "Electrike", "description": "Obtain an Electrike", "points": 1, "id": 309, "badges": 1},
-    63: {"title": "Manectric", "description": "Obtain a Manectric", "points": 2, "id": 310, "badges": 1},
-    64: {"title": "Plusle", "description": "Obtain a Plusle", "points": 1, "id": 311, "badges": 1},
-    65: {"title": "Minun", "description": "Obtain a Minun", "points": 1, "id": 312, "badges": 1},
-    66: {"title": "Magnemite", "description": "Obtain a Magnemite", "points": 1, "id": 81, "badges": 5},
-    67: {"title": "Magneton", "description": "Obtain a Magneton", "points": 2, "id": 82, "badges": 5},
-    68: {"title": "Voltorb", "description": "Obtain a Voltorb", "points": 1, "id": 100, "badges": 5},
-    69: {"title": "Electrode", "description": "Obtain an Electrode", "points": 2, "id": 101, "badges": 5},
-    70: {"title": "Volbeat", "description": "Obtain a Volbeat", "points": 1, "id": 313, "badges": 1},
-    71: {"title": "Illumise", "description": "Obtain an Illumise", "points": 1, "id": 314, "badges": 1},
-    72: {"title": "Oddish", "description": "Obtain an Oddish", "points": 1, "id": 43, "badges": 1},
-    73: {"title": "Gloom", "description": "Obtain a Gloom", "points": 2, "id": 44, "badges": 1},
-    74: {"title": "Vileplume", "description": "Obtain a Vileplume", "points": 3, "id": 45, "badges": 6},
-    75: {"title": "Bellossom", "description": "Obtain a Bellossom", "points": 3, "id": 182, "badges": 2},
-    76: {"title": "Doduo", "description": "Obtain a Doduo", "points": 1, "id": 84, "badges": 5},
-    77: {"title": "Dodrio", "description": "Obtain a Dodrio", "points": 2, "id":85, "badges": 5},
-    78: {"title": "Gulpin", "description": "Obtain a Gulpin", "points": 1, "id": 316, "badges": 1},
-    79: {"title": "Swalot", "description": "Obtain a Swalot", "points": 2, "id": 317, "badges": 1},
-    80: {"title": "Carvanha", "description": "Obtain a Carvanha", "points": 1, "id": 318, "badges": 5},
-    81: {"title": "Sharpedo", "description": "Obtain a Sharpedo", "points": 2, "id": 319, "badges": 5},
-    82: {"title": "Wailmer", "description": "Obtain a Wailmer", "points": 1, "id": 320, "badges": 5},
-    83: {"title": "Wailord", "description": "Obtain a Wailord", "points": 2, "id": 321, "badges": 5},
-    84: {"title": "Numel", "description": "Obtain a Numel", "points": 1, "id": 322, "badges": 2},
-    85: {"title": "Camerupt", "description": "Obtain a Camerupt", "points": 2, "id": 323, "badges": 2},
-    86: {"title": "Slugma", "description": "Obtain a Slugma", "points": 1, "id": 218, "badges": 2},
-    87: {"title": "Magcargo", "description": "Obtain a Magcargo", "points": 2, "id": 219, "badges": 2},
-    88: {"title": "Torkoal", "description": "Obtain a Torkoal", "points": 1, "id": 324, "badges": 2},
-    89: {"title": "Grimer", "description": "Obtain a Grimer", "points": 1, "id": 88, "badges": 2},
-    90: {"title": "Muk", "description": "Obtain a Muk", "points": 2, "id": 89, "badges": 2},
-    91: {"title": "Koffing", "description": "Obtain a Koffing", "points": 1, "id": 109, "badges": 2},
-    92: {"title": "Weezing", "description": "Obtain a Weezing", "points": 2, "id": 110, "badges": 2},
-    93: {"title": "Spoink", "description": "Obtain a Spoink", "points": 1, "id": 325, "badges": 2},
-    94: {"title": "Grumpig", "description": "Obtain a Grumpig", "points": 2, "id": 326, "badges": 2},
-    95: {"title": "Sandshrew", "description": "Obtain a Sandshrew", "points": 1, "id": 27, "badges": 3},
-    96: {"title": "Sandslash", "description": "Obtain a Sandslash", "points": 2, "id": 28, "badges": 3},
-    97: {"title": "Spinda", "description": "Obtain a Spinda", "points": 1, "id": 327, "badges": 2},
-    98: {"title": "Skarmory", "description": "Obtain a Skarmory", "points": 1, "id": 227, "badges": 2},
-    99: {"title": "Trapinch", "description": "Obtain a Trapinch", "points": 1, "id": 328, "badges": 3},
-    100: {"title": "Vibrava", "description": "Obtain a Vibrava", "points": 2, "id": 329, "badges": 3},
-    101: {"title": "Flygon", "description": "Obtain a Flygon", "points": 3, "id": 330, "badges": 3},
-    102: {"title": "Cacnea", "description": "Obtain a Cacnea", "points": 1, "id": 331, "badges": 3},
-    103: {"title": "Cacturne", "description": "Obtain a Cacturne", "points": 2, "id": 332, "badges": 3},
-    104: {"title": "Swablu", "description": "Obtain a Swablu", "points": 1, "id": 333, "badges": 2},
-    105: {"title": "Altaria", "description": "Obtain an Altaria", "points": 2, "id": 334, "badges": 2},
-    106: {"title": "Seviper", "description": "Obtain a Seviper", "points": 1, "id": 336, "badges": 2},
-    107: {"title": "Solrock", "description": "Obtain a Solrock", "points": 1, "id": 338, "badges": 2},
-    108: {"title": "Barboach", "description": "Obtain a Barboach", "points": 1, "id": 339, "badges": 5},
-    109: {"title": "Whiscash", "description": "Obtain a Whiscash", "points": 2, "id": 340, "badges": 5},
-    110: {"title": "Corphish", "description": "Obtain a Corphish", "points": 1, "id": 341, "badges": 5},
-    111: {"title": "Crawdaunt", "description": "Obtain a Crawdaunt", "points": 2, "id": 342, "badges": 5},
-    112: {"title": "Baltoy", "description": "Obtain a Baltoy", "points": 1, "id": 343, "badges": 3},
-    113: {"title": "Claydol", "description": "Obtain a Claydol", "points": 2, "id": 344, "badges": 3},
-    114: {"title": "Lileep", "description": "Obtain a Lileep", "points": 1, "id": 345, "badges": 9},
-    115: {"title": "Cradily", "description": "Obtain a Cradily", "points": 2, "id": 346, "badges": 9},
-    116: {"title": "Anorith", "description": "Obtain an Anorith", "points": 1, "id": 347, "badges": 9},
-    117: {"title": "Armaldo", "description": "Obtain an Armaldo", "points": 2, "id": 348, "badges": 9},
-    118: {"title": "Igglybuff", "description": "Obtain an Igglybuff", "points": 1, "id": 174, "badges": 5},
-    119: {"title": "Jigglypuff", "description": "Obtain a Jigglypuff", "points": 2, "id": 39, "badges": 5},
-    120: {"title": "Feebas", "description": "Obtain a Feebas", "points": 5, "id": 349, "badges": 5},
-    121: {"title": "Milotic", "description": "Obtain a Milotic", "points": 5, "id": 350, "badges": 5},
-    122: {"title": "Castform", "description": "Obtain a Castform", "points": 1, "id": 351, "badges": 5},
-    123: {"title": "Staryu", "description": "Obtain a Staryu", "points": 1, "id": 120, "badges": 5},
-    124: {"title": "Starmie", "description": "Obtain a Starmie", "points": 2, "id": 121, "badges": 6},
-    125: {"title": "Kecleon", "description": "Obtain a Kecleon", "points": 1, "id": 352, "badges": 5},
-    126: {"title": "Shuppet", "description": "Obtain a Shuppet", "points": 1, "id": 353, "badges": 5},
-    127: {"title": "Banette", "description": "Obtain a Banette", "points": 2, "id": 354, "badges": 5},
-    128: {"title": "Duskull", "description": "Obtain a Duskull", "points": 1, "id": 355, "badges": 5},
-    129: {"title": "Dusclops", "description": "Obtain a Dusclops", "points": 2, "id": 356, "badges": 5},
-    130: {"title": "Tropius", "description": "Obtain a Tropius", "points": 1, "id": 357, "badges": 5},
-    131: {"title": "Chimecho", "description": "Obtain a Chimecho", "points": 1, "id": 358, "badges": 5},
-    132: {"title": "Absol", "description": "Obtain an Absol", "points": 1, "id": 359, "badges": 5},
-    133: {"title": "Vulpix", "description": "Obtain a Vulpix", "points": 1, "id": 37, "badges": 5},
-    134: {"title": "Ninetales", "description": "Obtain a Ninetales", "points": 2, "id": 38, "badges": 5},
-    135: {"title": "Pichu", "description": "Obtain a Pichu", "points": 1, "id": 172, "badges": 5},
-    136: {"title": "Pikachu", "description": "Obtain a Pikachu", "points": 2, "id": 25, "badges": 5},
-    137: {"title": "Raichu", "description": "Obtain a Raichu", "points": 3, "id": 26, "badges": 5},
-    138: {"title": "Psyduck", "description": "Obtain a Psyduck", "points": 1, "id": 54, "badges": 5},
-    139: {"title": "Golduck", "description": "Obtain a Golduck", "points": 2, "id": 55, "badges": 5},
-    140: {"title": "Wynaut", "description": "Obtain a Wynaut", "points": 1, "id": 360, "badges": 2},
-    141: {"title": "Wobbuffet", "description": "Obtain a Wobbuffet", "points": 2, "id": 202, "badges": 2},
-    142: {"title": "Natu", "description": "Obtain a Natu", "points": 1, "id": 177, "badges": 5},
-    143: {"title": "Xatu", "description": "Obtain a Xatu", "points": 2, "id": 178, "badges": 5},
-    144: {"title": "Girafarig", "description": "Obtain a Girafarig", "points": 1, "id": 203, "badges": 5},
-    145: {"title": "Phanpy", "description": "Obtain a Phanpy", "points": 1, "id": 231, "badges": 5},
-    146: {"title": "Donphan", "description": "Obtain a Donphan", "points": 2, "id": 232, "badges": 5},
-    147: {"title": "Pinsir", "description": "Obtain a Pinsir", "points": 1, "id": 127, "badges": 5},
-    148: {"title": "Heracross", "description": "Obtain a Heracross", "points": 1, "id": 214, "badges": 5},
-    149: {"title": "Rhyhorn", "description": "Obtain a Rhyhorn", "points": 1, "id": 111, "badges": 5},
-    150: {"title": "Rhydon", "description": "Obtain a Rhydon", "points": 2, "id": 112, "badges": 5},
-    151: {"title": "Snorunt", "description": "Obtain a Snorunt", "points": 1, "id": 361, "badges": 5},
-    152: {"title": "Glalie", "description": "Obtain a Glalie", "points": 2, "id": 362, "badges": 5},
-    153: {"title": "Spheal", "description": "Obtain a Spheal", "points": 1, "id": 363, "badges": 5},
-    154: {"title": "Sealeo", "description": "Obtain a Sealeo", "points": 2, "id": 364, "badges": 5},
-    155: {"title": "Walrein", "description": "Obtain a Walrein", "points": 3, "id": 365, "badges": 5},
-    156: {"title": "Clamperl", "description": "Obtain a Clamperl", "points": 1, "id": 366, "badges": 6},
-    157: {"title": "Relicanth", "description": "Obtain a Relicanth", "points": 1, "id": 369, "badges": 6},
-    158: {"title": "Corsola", "description": "Obtain a Corsola", "points": 1, "id": 222, "badges": 5},
-    159: {"title": "Chinchou", "description": "Obtain a Chinchou", "points": 1, "id": 170, "badges": 6},
-    160: {"title": "Lanturn", "description": "Obtain a Lanturn", "points": 2, "id": 171, "badges": 6},
-    161: {"title": "Luvdisc", "description": "Obtain a Luvdisc", "points": 1, "id": 370, "badges": 5},
-    162: {"title": "Horsea", "description": "Obtain a Horsea", "points": 1, "id": 116, "badges": 5},
-    163: {"title": "Seadra", "description": "Obtain a Seadra", "points": 2, "id": 117, "badges": 5},
-    164: {"title": "Bagon", "description": "Obtain a Bagon", "points": 1, "id": 371, "badges": 7},
-    165: {"title": "Shelgon", "description": "Obtain a Shelgon", "points": 2, "id": 372, "badges": 7},
-    166: {"title": "Salamence", "description": "Obtain a Salamence", "points": 3, "id": 373, "badges": 7},
-    167: {"title": "Beldum", "description": "Obtain a Beldum", "points": 1, "id": 374, "badges": 9},
-    168: {"title": "Metang", "description": "Obtain a Metang", "points": 2, "id": 375, "badges": 9},
-    169: {"title": "Metagross", "description": "Obtain a Metagross", "points": 3, "id": 376, "badges": 9},
-    170: {"title": "Regirock", "description": "Obtain a Regirock", "points": 1, "id": 377, "badges": 6},
-    171: {"title": "Regice", "description": "Obtain a Regice", "points": 1, "id": 378, "badges": 6},
-    172: {"title": "Registeel", "description": "Obtain a Registeel", "points": 1, "id": 379, "badges": 6},
-    173: {"title": "Kyogre", "description": "Obtain a Kyogre", "points": 1, "id": 382, "badges": 9},
-    174: {"title": "Groudon", "description": "Obtain a Groudon", "points": 1, "id": 383, "badges": 9},
-    175: {"title": "Rayquaza", "description": "Obtain a Rayquaza", "points": 1, "id": 384, "badges": 9},
-    176: {"title": "Meowth", "description": "Obtain a Meowth", "points": 1, "id": 52, "badges": 9},
-    177: {"title": "Persian", "description": "Obtain a Persian", "points": 2, "id": 53, "badges": 9},
-    178: {"title": "Ditto", "description": "Obtain a Ditto", "points": 1, "id": 132, "badges": 9},
-    179: {"title": "Hoothoot", "description": "Obtain a Hoothoot", "points": 1, "id": 163, "badges": 9},
-    180: {"title": "Noctowl", "description": "Obtain a Noctowl", "points": 2, "id": 164, "badges": 9},
-    181: {"title": "Ledyba", "description": "Obtain a Ledyba", "points": 1, "id": 165, "badges": 9},
-    182: {"title": "Ledian", "description": "Obtain a Ledian", "points": 2, "id": 166, "badges": 9},
-    183: {"title": "Spinarak", "description": "Obtain a Spinarak", "points": 1, "id": 167, "badges": 9},
-    184: {"title": "Ariados", "description": "Obtain an Ariados", "points": 2, "id": 168, "badges": 9},
-    185: {"title": "Mareep", "description": "Obtain a Mareep", "points": 1, "id": 179, "badges": 9},
-    186: {"title": "Flaaffy", "description": "Obtain a Flaaffy", "points": 2, "id": 180, "badges": 9},
-    187: {"title": "Ampharos", "description": "Obtain an Ampharos", "points": 3, "id": 181, "badges": 9},
-    188: {"title": "Sudowoodo", "description": "Obtain a Sudowoodo", "points": 1, "id": 185, "badges": 9},
-    189: {"title": "Aipom", "description": "Obtain an Aipom", "points": 1, "id": 190, "badges": 9},
-    190: {"title": "Sunkern", "description": "Obtain a Sunkern", "points": 1, "id": 191, "badges": 9},
-    191: {"title": "Sunflora", "description": "Obtain a Sunflora", "points": 2, "id": 192, "badges": 9},
-    192: {"title": "Wooper", "description": "Obtain a Wooper", "points": 1, "id": 194, "badges": 9},
-    193: {"title": "Quagsire", "description": "Obtain a Quagsire", "points": 2, "id": 195, "badges": 9},
-    194: {"title": "Pineco", "description": "Obtain a Pineco", "points": 1, "id": 204, "badges": 9},
-    195: {"title": "Forretress", "description": "Obtain a Forretress", "points": 2, "id": 205, "badges": 9},
-    196: {"title": "Gligar", "description": "Obtain a Gligar", "points": 1, "id": 207, "badges": 9},
-    197: {"title": "Snubbull", "description": "Obtain a Snubbull", "points": 1, "id": 209, "badges": 9},
-    198: {"title": "Granbull", "description": "Obtain a Granbull", "points": 2, "id": 210, "badges": 9},
-    199: {"title": "Shuckle", "description": "Obtain a Shuckle", "points": 1, "id": 213, "badges": 9},
-    200: {"title": "Teddiursa", "description": "Obtain a Teddiursa", "points": 1, "id": 216, "badges": 9},
-    201: {"title": "Ursaring", "description": "Obtain an Ursaring", "points": 2, "id": 217, "badges": 9},  
-    202: {"title": "Remoraid", "description": "Obtain a Remoraid", "points": 1, "id": 223, "badges": 9},
-    203: {"title": "Octillery", "description": "Obtain an Octillery", "points": 2, "id": 224, "badges": 9},
-    204: {"title": "Houndour", "description": "Obtain a Houndour", "points": 1, "id": 228, "badges": 9},
-    205: {"title": "Houndoom", "description": "Obtain a Houndoom", "points": 2, "id": 229, "badges": 9},
-    206: {"title": "Stantler", "description": "Obtain a Stantler", "points": 1, "id": 234, "badges": 9},
-    207: {"title": "Smeargle", "description": "Obtain a Smeargle", "points": 1, "id": 235, "badges": 9},
-    208: {"title": "Miltank", "description": "Obtain a Miltank", "points": 1, "id": 241, "badges": 9},
+    1: {"title": "Poochyena", "description": "Register a Poochyena before obtaining the Stone Badge.", "points": 1, "num": 261, "badges": 0, "id": 339795, "badge": "383470"},
+    2: {"title": "Mightyena", "description": "Register a Mightyena before obtaining the Stone Badge.", "points": 2, "num": 262, "badges": 0, "id": 339797, "badge": "383481"},
+    3: {"title": "Zigzagoon", "description": "Register a Zigzagoon before obtaining the Stone Badge.", "points": 1, "num": 263, "badges": 0, "id": 339798, "badge": "383482"},
+    4: {"title": "Linoone", "description": "Register a Linoone before obtaining the Stone Badge.", "points": 2, "num": 264, "badges": 0, "id": 339799, "badge": "383483"},
+    5: {"title": "Wurmple", "description": "Register a Wurmple before obtaining the Stone Badge.", "points": 1, "num": 265, "badges": 0, "id": 339800, "badge": "383484"},
+    6: {"title": "Silcoon", "description": "Register a Silcoon before obtaining the Stone Badge.", "points": 2, "num": 266, "badges": 0, "id": 339801, "badge": "383485"},
+    7: {"title": "Beautifly", "description": "Register a Beautifly before obtaining the Stone Badge.", "points": 3, "num": 267, "badges": 0, "id": 339802, "badge": "383486"},
+    8: {"title": "Cascoon", "description": "Register a Cascoon before obtaining the Stone Badge.", "points": 2, "num": 268, "badges": 0, "id": 339803, "badge": "383487"},
+    9: {"title": "Dustox", "description": "Register a Dustox before obtaining the Stone Badge.", "points": 3, "num": 269, "badges": 0, "id": 339804, "badge": "383488"},
+    10: {"title": "Lotad", "description": "Register a Lotad before obtaining the Stone Badge.", "points": 1, "num": 270, "badges": 0, "id": 339805, "badge": "383489"},
+    11: {"title": "Lombre", "description": "Register a Lombre before obtaining the Stone Badge.", "points": 2, "num": 271, "badges": 0, "id": 339806, "badge": "383490"},
+    12: {"title": "Ludicolo", "description": "Register a Ludicolo while holding only the Stone, Dynamo, Heat, Knuckle, Balance and Mind Badges.", "points": 3, "num": 272, "badges": 6, "id": 339807, "badge": "383491"},
+    13: {"title": "Seedot", "description": "Register a Seedot before obtaining the Stone Badge.", "points": 1, "num": 273, "badges": 0, "id": 339808, "badge": "383492"},
+    14: {"title": "Nuzleaf", "description": "Register a Nuzleaf before obtaining the Stone Badge.", "points": 2, "num": 274, "badges": 0, "id": 339809, "badge": "383493"},
+    15: {"title": "Shiftry", "description": "Register a Shiftry while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges or after also obtaining the Mind Badge.", "points": 3, "num": 275, "badges": 6, "id": 339810, "badge": "383494"},
+    16: {"title": "Taillow", "description": "Register a Taillow before obtaining the Stone Badge.", "points": 1, "num": 276, "badges": 0, "id": 339811, "badge": "383495"},
+    17: {"title": "Swellow", "description": "Register a Swellow before obtaining the Stone Badge.", "points": 2, "num": 277, "badges": 0, "id": 339812, "badge": "383496"},
+    18: {"title": "Wingull", "description": "Register a Wingull before obtaining the Stone Badge.", "points": 1, "num": 278, "badges": 0, "id": 339813, "badge": "383497"},
+    19: {"title": "Pelipper", "description": "Register a Pelipper before obtaining the Stone Badge.", "points": 2, "num": 279, "badges": 0, "id": 339814, "badge": "383498"},
+    20: {"title": "Ralts", "description": "Register a Ralts before obtaining the Stone Badge.", "points": 1, "num": 280, "badges": 0, "id": 339815, "badge": "383499"},
+    21: {"title": "Kirlia", "description": "Register a Kirlia before obtaining the Stone Badge.", "points": 2, "num": 281, "badges": 0, "id": 339816, "badge": "383500"},
+    22: {"title": "Gardevoir", "description": "Register a Gardevoir before obtaining the Stone Badge.", "points": 3, "num": 282, "badges": 0, "id": 339817, "badge": "383501"},
+    23: {"title": "Shroomish", "description": "Register a Shroomish before obtaining the Stone Badge.", "points": 1, "num": 285, "badges": 0, "id": 339818, "badge": "383502"},
+    24: {"title": "Breloom", "description": "Register a Breloom before obtaining the Stone Badge.", "points": 2, "num": 286, "badges": 0, "id": 339819, "badge": "383503"},
+    25: {"title": "Slakoth", "description": "Register a Slakoth before obtaining the Stone Badge.", "points": 1, "num": 287, "badges": 0, "id": 339820, "badge": "383504"},
+    26: {"title": "Vigoroth", "description": "Register a Vigoroth before obtaining the Stone Badge.", "points": 2, "num": 288, "badges": 0, "id": 339821, "badge": "383505"},
+    27: {"title": "Slaking", "description": "Register a Slaking before obtaining the Stone Badge.", "points": 3, "num": 289, "badges": 0, "id": 339822, "badge": "383506"},
+    28: {"title": "Abra", "description": "Register an Abra before obtaining the Stone Badge.", "points": 1, "num": 63, "badges": 0, "id": 339823, "badge": "383507"},
+    29: {"title": "Kadabra", "description": "Register a Kadabra before obtaining the Stone Badge.", "points": 2, "num": 64, "badges": 0, "id": 339824, "badge": "383508"},
+    30: {"title": "Nincada", "description": "Register a Nincada before obtaining the Stone Badge.", "points": 1, "num": 290, "badges": 0, "id": 339825, "badge": "383509"},
+    31: {"title": "Ninjask", "description": "Register a Ninjask before obtaining the Stone Badge.", "points": 2, "num": 291, "badges": 0, "id": 339826, "badge": "383510"},
+    32: {"title": "Shedinja", "description": "Register a Shedinja before obtaining the Stone Badge.", "points": 2, "num": 292, "badges": 0, "id": 339827, "badge": "383511"},
+    33: {"title": "Whismur", "description": "Register a Whismur before obtaining the Stone Badge.", "points": 1, "num": 293, "badges": 0, "id": 339828, "badge": "383512"},
+    34: {"title": "Loudred", "description": "Register a Loudred before obtaining the Stone Badge.", "points": 2, "num": 294, "badges": 0, "id": 339829, "badge": "383513"},
+    35: {"title": "Exploud", "description": "Register an Exploud before obtaining the Stone Badge.", "points": 3, "num": 295, "badges": 0, "id": 339830, "badge": "383514"},
+    36: {"title": "Makuhita", "description": "Register a Makuhita while holding only the Stone Badge.", "points": 1, "num": 296, "badges": 1, "id": 339831, "badge": "383515"},
+    37: {"title": "Hariyama", "description": "Register a Hariyama while holding only the Stone Badge.", "points": 2, "num": 297, "badges": 1, "id": 339832, "badge": "383516"},
+    38: {"title": "Goldeen", "description": "Register a Goldeen while holding only the Stone Badge.", "points": 1, "num": 118, "badges": 1, "id": 339833, "badge": "383517"},
+    39: {"title": "Seaking", "description": "Register a Seaking while holding only the Stone Badge.", "points": 2, "num": 119, "badges": 1, "id": 339834, "badge": "383518"},
+    40: {"title": "Magikarp", "description": "Register a Magikarp while holding only the Stone Badge.", "points": 1, "num": 129, "badges": 1, "id": 339835, "badge": "383519"},
+    41: {"title": "Gyarados", "description": "Register a Gyarados while holding only the Stone Badge.", "points": 2, "num": 130, "badges": 1, "id": 339836, "badge": "383520"},
+    42: {"title": "Azurill", "description": "Register an Azurill while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 298, "badges": 5, "id": 339837, "badge": "383521"},
+    43: {"title": "Marill", "description": "Register a Marill before obtaining the Stone Badge.", "points": 2, "num": 183, "badges": 0, "id": 339838, "badge": "383522"},
+    44: {"title": "Azumarill", "description": "Register an Azumarill before obtaining the Stone Badge.", "points": 3, "num": 184, "badges": 0, "id": 339839, "badge": "383523"},
+    45: {"title": "Geodude", "description": "Register a Geodude while holding only the Stone Badge.", "points": 1, "num": 74, "badges": 1, "id": 339840, "badge": "383524"},
+    46: {"title": "Graveler", "description": "Register a Graveler while holding only the Stone Badge.", "points": 2, "num": 75, "badges": 1, "id": 339841, "badge": "383525"},
+    47: {"title": "Nosepass", "description": "Register a Nosepass while holding only the Stone and Dynamo Badges.", "points": 1, "num": 299, "badges": 2, "id": 339842, "badge": "383526"},
+    48: {"title": "Skitty", "description": "Register a Skitty before obtaining the Stone Badge.", "points": 1, "num": 300, "badges": 0, "id": 339843, "badge": "383527"},
+    49: {"title": "Delcatty", "description": "Register a Delcatty while holding only the Stone and Dynamo Badges.", "points": 2, "num": 301, "badges": 2, "id": 339844, "badge": "383528"},
+    50: {"title": "Zubat", "description": "Register a Zubat while holding only the Stone Badge.", "points": 1, "num": 41, "badges": 1, "id": 339845, "badge": "383529"},
+    51: {"title": "Golbat", "description": "Register a Golbat while holding only the Stone Badge.", "points": 2, "num": 42, "badges": 1, "id": 339846, "badge": "383530"},
+    52: {"title": "Crobat", "description": "Register a Crobat while holding only the Stone Badge.", "points": 3, "num": 169, "badges": 1, "id": 339847, "badge": "383531"},
+    53: {"title": "Tentacool", "description": "Register a Tentacool while holding only the Stone Badge.", "points": 1, "num": 72, "badges": 1, "id": 339848, "badge": "383532"},
+    54: {"title": "Tentacruel", "description": "Register a Tentacruel while holding only the Stone Badge.", "points": 2, "num": 73, "badges": 1, "id": 339849, "badge": "383533"},
+    55: {"title": "Sableye", "description": "Register a Sableye while holding only the Stone Badge.", "points": 1, "num": 302, "badges": 1, "id": 339850, "badge": "383534"},
+    56: {"title": "Mawile", "description": "Register a Mawile while holding only the Stone, Dynamo, Heat, Knuckle, Balance, Mind and Rain Badges.", "points": 1, "num": 303, "badges": 7, "id": 339851, "badge": "383535"},
+    57: {"title": "Aron", "description": "Register an Aron while holding only the Stone Badge.", "points": 1, "num": 304, "badges": 1, "id": 339852, "badge": "383536"},
+    58: {"title": "Lairon", "description": "Register a Lairon while holding only the Stone Badge.", "points": 2, "num": 305, "badges": 1, "id": 339853, "badge": "383537"},
+    59: {"title": "Aggron", "description": "Register an Aggron while holding only the Stone Badge.", "points": 3, "num": 306, "badges": 1, "id": 339854, "badge": "383538"},
+    60: {"title": "Machop", "description": "Register a Machop while holding only the Stone and Dynamo Badges.", "points": 1, "num": 66, "badges": 2, "id": 339855, "badge": "383539"},
+    61: {"title": "Machoke", "description": "Register a Machoke while holding only the Stone and Dynamo Badges.", "points": 2, "num": 67, "badges": 2, "id": 339856, "badge": "383540"},
+    62: {"title": "Electrike", "description": "Register an Electrike while holding only the Stone Badge.", "points": 1, "num": 309, "badges": 1, "id": 339857, "badge": "383542"},
+    63: {"title": "Manectric", "description": "Register a Manectric while holding only the Stone Badge.", "points": 2, "num": 310, "badges": 1, "id": 339858, "badge": "383543"},
+    64: {"title": "Plusle", "description": "Register a Plusle while holding only the Stone Badge.", "points": 1, "num": 311, "badges": 1, "id": 339859, "badge": "383544"},
+    65: {"title": "Minun", "description": "Register a Minun while holding only the Stone Badge.", "points": 1, "num": 312, "badges": 1, "id": 339860, "badge": "383545"},
+    66: {"title": "Magnemite", "description": "Register a Magnemite while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 81, "badges": 5, "id": 339861, "badge": "383546"},
+    67: {"title": "Magneton", "description": "Register a Magneton while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 82, "badges": 5, "id": 339862, "badge": "383547"},
+    68: {"title": "Voltorb", "description": "Register a Voltorb while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 100, "badges": 5, "id": 339863, "badge": "383548"},
+    69: {"title": "Electrode", "description": "Register an Electrode while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 101, "badges": 5, "id": 339864, "badge": "383549"},
+    70: {"title": "Volbeat", "description": "Register a Volbeat while holding only the Stone Badge.", "points": 1, "num": 313, "badges": 1, "id": 339865, "badge": "383550"},
+    71: {"title": "Illumise", "description": "Register an Illumise while holding only the Stone Badge.", "points": 1, "num": 314, "badges": 1, "id": 339866, "badge": "383551"},
+    72: {"title": "Oddish", "description": "Register an Oddish while holding only the Stone Badge.", "points": 1, "num": 43, "badges": 1, "id": 339867, "badge": "383552"},
+    73: {"title": "Gloom", "description": "Register a Gloom while holding only the Stone Badge.", "points": 2, "num": 44, "badges": 1, "id": 339868, "badge": "383553"},
+    74: {"title": "Vileplume", "description": "Register a Vileplume while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges or after also obtaining the Mind Badge.", "points": 3, "num": 45, "badges": 6, "id": 339869, "badge": "383554"},
+    75: {"title": "Bellossom", "description": "Register a Bellossom while holding only the Stone and Dynamo Badges.", "points": 3, "num": 182, "badges": 2, "id": 339870, "badge": "383556"},
+    76: {"title": "Doduo", "description": "Register a Doduo while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 84, "badges": 5, "id": 339871, "badge": "383557"},
+    77: {"title": "Dodrio", "description": "Register a Dodrio while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 85, "badges": 5, "id": 339872, "badge": "383558"},
+    78: {"title": "Gulpin", "description": "Register a Gulpin while holding only the Stone Badge.", "points": 1, "num": 316, "badges": 1, "id": 339873, "badge": "383559"},
+    79: {"title": "Swalot", "description": "Register a Swalot while holding only the Stone Badge.", "points": 2, "num": 317, "badges": 1, "id": 339874, "badge": "383560"},
+    80: {"title": "Carvanha", "description": "Register a Carvanha while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 318, "badges": 5, "id": 339875, "badge": "383561"},
+    81: {"title": "Sharpedo", "description": "Register a Sharpedo while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 319, "badges": 5, "id": 339876, "badge": "383562"},
+    82: {"title": "Wailmer", "description": "Register a Wailmer while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 320, "badges": 5, "id": 339877, "badge": "383563"},
+    83: {"title": "Wailord", "description": "Register a Wailord while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 321, "badges": 5, "id": 339878, "badge": "383564"},
+    84: {"title": "Numel", "description": "Register a Numel while holding only the Stone and Dynamo Badges.", "points": 1, "num": 322, "badges": 2, "id": 339879, "badge": "383565"},
+    85: {"title": "Camerupt", "description": "Register a Camerupt while holding only the Stone and Dynamo Badges.", "points": 2, "num": 323, "badges": 2, "id": 339880, "badge": "383566"},
+    86: {"title": "Slugma", "description": "Register a Slugma while holding only the Stone and Dynamo Badges.", "points": 1, "num": 218, "badges": 2, "id": 339881, "badge": "383567"},
+    87: {"title": "Magcargo", "description": "Register a Magcargo while holding only the Stone and Dynamo Badges.", "points": 2, "num": 219, "badges": 2, "id": 339882, "badge": "383568"},
+    88: {"title": "Torkoal", "description": "Register a Torkoal while holding only the Stone and Dynamo Badges.", "points": 1, "num": 324, "badges": 2, "id": 339883, "badge": "383569"},
+    89: {"title": "Grimer", "description": "Register a Grimer while holding only the Stone and Dynamo Badges.", "points": 1, "num": 88, "badges": 2, "id": 339884, "badge": "383570"},
+    90: {"title": "Muk", "description": "Register a Muk while holding only the Stone and Dynamo Badges.", "points": 2, "num": 89, "badges": 2, "id": 339885, "badge": "383571"},
+    91: {"title": "Koffing", "description": "Register a Koffing while holding only the Stone and Dynamo Badges.", "points": 1, "num": 109, "badges": 2, "id": 339886, "badge": "383572"},
+    92: {"title": "Weezing", "description": "Register a Weezing while holding only the Stone and Dynamo Badges.", "points": 2, "num": 110, "badges": 2, "id": 339887, "badge": "383573"},
+    93: {"title": "Spoink", "description": "Register a Spoink while holding only the Stone and Dynamo Badges.", "points": 1, "num": 325, "badges": 2, "id": 339888, "badge": "383574"},
+    94: {"title": "Grumpig", "description": "Register a Grumpig while holding only the Stone and Dynamo Badges.", "points": 2, "num": 326, "badges": 2, "id": 339889, "badge": "383575"},
+    95: {"title": "Sandshrew", "description": "Register a Sandshrew while holding only the Stone, Dynamo and Heat Badges.", "points": 1, "num": 27, "badges": 3, "id": 339890, "badge": "383576"},
+    96: {"title": "Sandslash", "description": "Register a Sandslash while holding only the Stone, Dynamo and Heat Badges.", "points": 2, "num": 28, "badges": 3, "id": 339891, "badge": "383577"},
+    97: {"title": "Spinda", "description": "Register a Spinda while holding only the Stone and Dynamo Badges.", "points": 1, "num": 327, "badges": 2, "id": 339892, "badge": "383578"},
+    98: {"title": "Skarmory", "description": "Register a Skarmory while holding only the Stone and Dynamo Badges.", "points": 1, "num": 227, "badges": 2, "id": 339893, "badge": "383579"},
+    99: {"title": "Trapinch", "description": "Register a Trapinch while holding only the Stone, Dynamo and Heat Badges.", "points": 1, "num": 328, "badges": 3, "id": 339894, "badge": "383580"},
+    100: {"title": "Vibrava", "description": "Register a Vibrava while holding only the Stone, Dynamo and Heat Badges.", "points": 2, "num": 329, "badges": 3, "id": 339895, "badge": "383581"},
+    101: {"title": "Flygon", "description": "Register a Flygon while holding only the Stone, Dynamo and Heat Badges.", "points": 3, "num": 330, "badges": 3, "id": 339896, "badge": "383582"},
+    102: {"title": "Cacnea", "description": "Register a Cacnea while holding only the Stone, Dynamo and Heat Badges.", "points": 1, "num": 331, "badges": 3, "id": 339897, "badge": "383583"},
+    103: {"title": "Cacturne", "description": "Register a Cacturne while holding only the Stone, Dynamo and Heat Badges.", "points": 2, "num": 332, "badges": 3, "id": 339898, "badge": "383584"},
+    104: {"title": "Swablu", "description": "Register a Swablu while holding only the Stone and Dynamo Badges.", "points": 1, "num": 333, "badges": 2, "id": 339899, "badge": "383585"},
+    105: {"title": "Altaria", "description": "Register an Altaria while holding only the Stone and Dynamo Badges.", "points": 2, "num": 334, "badges": 2, "id": 339900, "badge": "383586"},
+    106: {"title": "Seviper", "description": "Register a Seviper while holding only the Stone and Dynamo Badges.", "points": 1, "num": 336, "badges": 2, "id": 339901, "badge": "383587"},
+    107: {"title": "Solrock", "description": "Register a Solrock while holding only the Stone and Dynamo Badges.", "points": 1, "num": 338, "badges": 2, "id": 339902, "badge": "383588"},
+    108: {"title": "Barboach", "description": "Register a Barboach while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 339, "badges": 5, "id": 339903, "badge": "383589"},
+    109: {"title": "Whiscash", "description": "Register a Whiscash while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 340, "badges": 5, "id": 339904, "badge": "383590"},
+    110: {"title": "Corphish", "description": "Register a Corphish while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 341, "badges": 5, "id": 339905, "badge": "383591"},
+    111: {"title": "Crawdaunt", "description": "Register a Crawdaunt while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 342, "badges": 5, "id": 339906, "badge": "383592"},
+    112: {"title": "Baltoy", "description": "Register a Baltoy while holding only the Stone, Dynamo and Heat Badges.", "points": 1, "num": 343, "badges": 3, "id": 339907, "badge": "383593"},
+    113: {"title": "Claydol", "description": "Register a Claydol while holding only the Stone, Dynamo and Heat Badges.", "points": 2, "num": 344, "badges": 3, "id": 339908, "badge": "383594"},
+    114: {"title": "Lileep", "description": "Register a Lileep while holding only the Stone, Dynamo and Heat Badges or after becoming Champion.", "points": 1, "num": 345, "badges": 8, "id": 339909, "badge": "383595"},
+    115: {"title": "Cradily", "description": "Register a Cradily while holding only the Stone, Dynamo and Heat Badges or after becoming Champion.", "points": 2, "num": 346, "badges": 8, "id": 339910, "badge": "383596"},
+    116: {"title": "Anorith", "description": "Register an Anorith while holding only the Stone, Dynamo and Heat Badges or after becoming Champion.", "points": 1, "num": 347, "badges": 8, "id": 339911, "badge": "383597"},
+    117: {"title": "Armaldo", "description": "Register an Armaldo while holding only the Stone, Dynamo and Heat Badges or after becoming Champion.", "points": 2, "num": 348, "badges": 8, "id": 339912, "badge": "383598"},
+    118: {"title": "Igglybuff", "description": "Register an Igglybuff while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 174, "badges": 5, "id": 339913, "badge": "383599"},
+    119: {"title": "Jigglypuff", "description": "Register a Jigglypuff while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 39, "badges": 5, "id": 339914, "badge": "383600"},
+    120: {"title": "Feebas", "description": "Register a Feebas while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 5, "num": 349, "badges": 5, "id": 339915, "badge": "383601"},
+    121: {"title": "Milotic", "description": "Register a Milotic while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 5, "num": 350, "badges": 5, "id": 339916, "badge": "383602"},
+    122: {"title": "Castform", "description": "Register a Castform while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 351, "badges": 5, "id": 339917, "badge": "383603"},
+    123: {"title": "Staryu", "description": "Register a Staryu while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 120, "badges": 5, "id": 339918, "badge": "383604"},
+    124: {"title": "Starmie", "description": "Register a Starmie while holding only the Stone, Dynamo, Heat, Knuckle, Balance and Mind Badges", "points": 2, "num": 121, "badges": 6, "id": 339919, "badge": "383605"},
+    125: {"title": "Kecleon", "description": "Register a Kecleon while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 352, "badges": 5, "id": 339920, "badge": "383606"},
+    126: {"title": "Shuppet", "description": "Register a Shuppet while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 353, "badges": 5, "id": 339921, "badge": "383607"},
+    127: {"title": "Banette", "description": "Register a Banette while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 354, "badges": 5, "id": 339922, "badge": "383608"},
+    128: {"title": "Duskull", "description": "Register a Duskull while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 355, "badges": 5, "id": 339923, "badge": "383609"},
+    129: {"title": "Dusclops", "description": "Register a Dusclops while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 356, "badges": 5, "id": 339924, "badge": "383610"},
+    130: {"title": "Tropius", "description": "Register a Tropius while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 357, "badges": 5, "id": 339925, "badge": "383611"},
+    131: {"title": "Chimecho", "description": "Register a Chimecho while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 358, "badges": 5, "id": 339926, "badge": "383612"},
+    132: {"title": "Absol", "description": "Register an Absol while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 359, "badges": 5, "id": 339927, "badge": "383613"},
+    133: {"title": "Vulpix", "description": "Register a Vulpix while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 37, "badges": 5, "id": 339928, "badge": "383614"},
+    134: {"title": "Ninetales", "description": "Register a Ninetales while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 38, "badges": 5, "id": 339929, "badge": "383615"},
+    135: {"title": "Pichu", "description": "Register a Pichu while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 172, "badges": 5, "id": 339930, "badge": "383616"},
+    136: {"title": "Pikachu", "description": "Register a Pikachu while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 25, "badges": 5, "id": 339931, "badge": "383617"},
+    137: {"title": "Raichu", "description": "Register a Raichu while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 3, "num": 26, "badges": 5, "id": 339932, "badge": "383618"},
+    138: {"title": "Psyduck", "description": "Register a Psyduck while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 54, "badges": 5, "id": 339933, "badge": "383619"},
+    139: {"title": "Golduck", "description": "Register a Golduck while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 55, "badges": 5, "id": 339934, "badge": "383620"},
+    140: {"title": "Wynaut", "description": "Register a Wynaut while holding only the Stone and Dynamo Badges.", "points": 1, "num": 360, "badges": 2, "id": 339935, "badge": "383621"},
+    141: {"title": "Wobbuffet", "description": "Register a Wobbuffet while holding only the Stone and Dynamo Badges.", "points": 2, "num": 202, "badges": 2, "id": 339936, "badge": "383622"},
+    142: {"title": "Natu", "description": "Register a Natu while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 177, "badges": 5, "id": 339937, "badge": "383623"},
+    143: {"title": "Xatu", "description": "Register a Xatu while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 178, "badges": 5, "id": 339938, "badge": "383624"},
+    144: {"title": "Girafarig", "description": "Register a Girafarig while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 203, "badges": 5, "id": 339939, "badge": "383625"},
+    145: {"title": "Phanpy", "description": "Register a Phanpy while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 231, "badges": 5, "id": 339940, "badge": "383626"},
+    146: {"title": "Donphan", "description": "Register a Donphan while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 232, "badges": 5, "id": 339941, "badge": "383628"},
+    147: {"title": "Pinsir", "description": "Register a Pinsir while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 127, "badges": 5, "id": 339942, "badge": "383629"},
+    148: {"title": "Heracross", "description": "Register a Heracross while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 214, "badges": 5, "id": 339943, "badge": "383630"},
+    149: {"title": "Rhyhorn", "description": "Register a Rhyhorn while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 111, "badges": 5, "id": 339944, "badge": "383631"},
+    150: {"title": "Rhydon", "description": "Register a Rhydon while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 112, "badges": 5, "id": 339945, "badge": "383632"},
+    151: {"title": "Snorunt", "description": "Register a Snorunt while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 361, "badges": 5, "id": 339946, "badge": "383633"},
+    152: {"title": "Glalie", "description": "Register a Glalie while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 362, "badges": 5, "id": 339947, "badge": "383634"},
+    153: {"title": "Spheal", "description": "Register a Spheal while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 363, "badges": 5, "id": 339948, "badge": "383635"},
+    154: {"title": "Sealeo", "description": "Register a Sealeo while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 364, "badges": 5, "id": 339949, "badge": "383636"},
+    155: {"title": "Walrein", "description": "Register a Walrein while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 3, "num": 365, "badges": 5, "id": 339950, "badge": "383637"},
+    156: {"title": "Clamperl", "description": "Register a Clamperl while holding only the Stone, Dynamo, Heat, Knuckle, Balance and Mind Badges.", "points": 1, "num": 366, "badges": 6, "id": 339951, "badge": "383638"},
+    157: {"title": "Relicanth", "description": "Register a Relicanth while holding only the Stone, Dynamo, Heat, Knuckle, Balance and Mind Badges.", "points": 1, "num": 369, "badges": 6, "id": 339952, "badge": "383639"},
+    158: {"title": "Corsola", "description": "Register a Corsola while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 222, "badges": 5, "id": 339953, "badge": "383640"},
+    159: {"title": "Chinchou", "description": "Register a Chinchou while holding only the Stone, Dynamo, Heat, Knuckle, Balance and Mind Badges.", "points": 1, "num": 170, "badges": 6, "id": 339954, "badge": "383641"},
+    160: {"title": "Lanturn", "description": "Register a Lanturn while holding only the Stone, Dynamo, Heat, Knuckle, Balance and Mind Badges.", "points": 2, "num": 171, "badges": 6, "id": 339955, "badge": "383642"},
+    161: {"title": "Luvdisc", "description": "Register a Luvdisc while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 370, "badges": 5, "id": 339956, "badge": "383643"},
+    162: {"title": "Horsea", "description": "Register a Horsea while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 1, "num": 116, "badges": 5, "id": 339957, "badge": "383644"},
+    163: {"title": "Seadra", "description": "Register a Seadra while holding only the Stone, Dynamo, Heat, Knuckle and Balance Badges.", "points": 2, "num": 117, "badges": 5, "id": 339958, "badge": "383645"},
+    164: {"title": "Bagon", "description": "Register a Bagon while holding only the Stone, Dynamo, Heat, Knuckle, Balance, Mind and Rain Badges.", "points": 1, "num": 371, "badges": 7, "id": 339959, "badge": "383646"},
+    165: {"title": "Shelgon", "description": "Register a Shelgon while holding only the Stone, Dynamo, Heat, Knuckle, Balance, Mind and Rain Badges.", "points": 2, "num": 372, "badges": 7, "id": 339960, "badge": "383647"},
+    166: {"title": "Salamence", "description": "Register a Salamence while holding only the Stone, Dynamo, Heat, Knuckle, Balance, Mind and Rain Badges.", "points": 3, "num": 373, "badges": 7, "id": 339961, "badge": "383648"},
+    167: {"title": "Beldum", "description": "Register a Beldum after becoming Champion.", "points": 1, "num": 374, "badges": 8, "id": 339962, "badge": "383649"},
+    168: {"title": "Metang", "description": "Register a Metang after becoming Champion.", "points": 2, "num": 375, "badges": 8, "id": 339963, "badge": "383650"},
+    169: {"title": "Metagross", "description": "Register a Metagross after becoming Champion.", "points": 3, "num": 376, "badges": 8, "id": 339964, "badge": "383651"},
+    170: {"title": "Regirock", "description": "Register a Regirock while holding only the Stone, Dynamo, Heat, Knuckle, Balance and Mind Badges.", "points": 5, "num": 377, "badges": 6, "id": 339965, "badge": "383653"},
+    171: {"title": "Regice", "description": "Register a Regice while holding only the Stone, Dynamo, Heat, Knuckle, Balance and Mind Badges.", "points": 5, "num": 378, "badges": 6, "id": 339966, "badge": "383654"},
+    172: {"title": "Registeel", "description": "Register a Registeel while holding only the Stone, Dynamo, Heat, Knuckle, Balance and Mind Badges.", "points": 5, "num": 379, "badges": 6, "id": 339967, "badge": "383655"},
+    173: {"title": "Kyogre", "description": "Register a Kyogre after becoming Champion.", "points": 5, "num": 382, "badges": 8, "id": 339968, "badge": "383656"},
+    174: {"title": "Groudon", "description": "Register a Groudon after becoming Champion.", "points": 5, "num": 383, "badges": 8, "id": 339969, "badge": "383657"},
+    175: {"title": "Rayquaza", "description": "Register a Rayquaza while holding only the Stone, Dynamo, Heat, Knuckle, Balance and Mind Badges.", "points": 5, "num": 384, "badges": 6, "id": 339970, "badge": "383658"},
+    176: {"title": "Meowth", "description": "Register a Meowth after becoming Champion.", "points": 1, "num": 52, "badges": 8, "id": 339971, "badge": "383659"},
+    177: {"title": "Persian", "description": "Register a Persian after becoming Champion.", "points": 2, "num": 53, "badges": 8, "id": 339972, "badge": "383660"},
+    178: {"title": "Ditto", "description": "Register a Ditto after becoming Champion.", "points": 1, "num": 132, "badges": 8, "id": 339973, "badge": "383661"},
+    179: {"title": "Hoothoot", "description": "Register a Hoothoot after becoming Champion.", "points": 1, "num": 163, "badges": 8, "id": 339974, "badge": "383662"},
+    180: {"title": "Noctowl", "description": "Register a Noctowl after becoming Champion.", "points": 2, "num": 164, "badges": 8, "id": 339975, "badge": "383663"},
+    181: {"title": "Ledyba", "description": "Register a Ledyba after becoming Champion.", "points": 1, "num": 165, "badges": 8, "id": 339976, "badge": "383664"},
+    182: {"title": "Ledian", "description": "Register a Ledian after becoming Champion.", "points": 2, "num": 166, "badges": 8, "id": 339977, "badge": "383665"},
+    183: {"title": "Spinarak", "description": "Register a Spinarak after becoming Champion.", "points": 1, "num": 167, "badges": 8, "id": 339978, "badge": "383666"},
+    184: {"title": "Ariados", "description": "Register an Ariados after becoming Champion.", "points": 2, "num": 168, "badges": 8, "id": 339979, "badge": "383667"},
+    185: {"title": "Mareep", "description": "Register a Mareep after becoming Champion.", "points": 1, "num": 179, "badges": 8, "id": 339980, "badge": "383668"},
+    186: {"title": "Flaaffy", "description": "Register a Flaaffy after becoming Champion.", "points": 2, "num": 180, "badges": 8, "id": 339981, "badge": "383669"},
+    187: {"title": "Ampharos", "description": "Register an Ampharos after becoming Champion.", "points": 3, "num": 181, "badges": 8, "id": 339982, "badge": "383670"},
+    188: {"title": "Sudowoodo", "description": "Register a Sudowoodo after becoming Champion.", "points": 1, "num": 185, "badges": 8, "id": 339983, "badge": "383671"},
+    189: {"title": "Aipom", "description": "Register an Aipom after becoming Champion.", "points": 1, "num": 190, "badges": 8, "id": 339984, "badge": "383672"},
+    190: {"title": "Sunkern", "description": "Register a Sunkern after becoming Champion.", "points": 1, "num": 191, "badges": 8, "id": 339985, "badge": "383673"},
+    191: {"title": "Sunflora", "description": "Register a Sunflora after becoming Champion.", "points": 2, "num": 192, "badges": 8, "id": 339986, "badge": "383674"},
+    192: {"title": "Wooper", "description": "Register a Wooper after becoming Champion.", "points": 1, "num": 194, "badges": 8, "id": 339987, "badge": "383675"},
+    193: {"title": "Quagsire", "description": "Register a Quagsire after becoming Champion.", "points": 2, "num": 195, "badges": 8, "id": 339988, "badge": "383676"},
+    194: {"title": "Pineco", "description": "Register a Pineco after becoming Champion.", "points": 1, "num": 204, "badges": 8, "id": 339989, "badge": "383677"},
+    195: {"title": "Forretress", "description": "Register a Forretress after becoming Champion.", "points": 2, "num": 205, "badges": 8, "id": 339990, "badge": "383678"},
+    196: {"title": "Gligar", "description": "Register a Gligar after becoming Champion.", "points": 1, "num": 207, "badges": 8, "id": 339991, "badge": "383679"},
+    197: {"title": "Snubbull", "description": "Register a Snubbull after becoming Champion.", "points": 1, "num": 209, "badges": 8, "id": 339992, "badge": "383680"},
+    198: {"title": "Granbull", "description": "Register a Granbull after becoming Champion.", "points": 2, "num": 210, "badges": 8, "id": 339993, "badge": "383681"},
+    199: {"title": "Shuckle", "description": "Register a Shuckle after becoming Champion.", "points": 1, "num": 213, "badges": 8, "id": 339994, "badge": "383682"},
+    200: {"title": "Teddiursa", "description": "Register a Teddiursa after becoming Champion.", "points": 1, "num": 216, "badges": 8, "id": 339995, "badge": "383683"},
+    201: {"title": "Ursaring", "description": "Register an Ursaring after becoming Champion.", "points": 2, "num": 217, "badges": 8, "id": 339996, "badge": "383684"},  
+    202: {"title": "Remoraid", "description": "Register a Remoraid after becoming Champion.", "points": 1, "num": 223, "badges": 8, "id": 339997, "badge": "383685"},
+    203: {"title": "Octillery", "description": "Register an Octillery after becoming Champion.", "points": 2, "num": 224, "badges": 8, "id": 339998, "badge": "383686"},
+    204: {"title": "Houndour", "description": "Register a Houndour after becoming Champion.", "points": 1, "num": 228, "badges": 8, "id": 339999, "badge": "383687"},
+    205: {"title": "Houndoom", "description": "Register a Houndoom after becoming Champion.", "points": 2, "num": 229, "badges": 8, "id": 340000, "badge": "383688"},
+    206: {"title": "Stantler", "description": "Register a Stantler after becoming Champion.", "points": 1, "num": 234, "badges": 8, "id": 340001, "badge": "383689"},
+    207: {"title": "Smeargle", "description": "Register a Smeargle after becoming Champion.", "points": 1, "num": 235, "badges": 8, "id": 340002, "badge": "383690"},
+    208: {"title": "Miltank", "description": "Register a Miltank after becoming Champion.", "points": 1, "num": 241, "badges": 8, "id": 340003, "badge": "383691"},
 }
+
 
 // Starters and Latias/Latios List
 SpecialCaseList = 
 { 
-    1: {"title": "Starter I", "description": "Obtain a Treecko, Torchic or Mudkip", "points": 1},
-    2: {"title": "Starter II", "description": "Obtain a Grovyle, Combusken or Marshtomp", "points": 2},
-    3: {"title": "Starter III", "description": "Obtain a Sceptile, Blaziken or Swampert", "points": 3},
-    4: {"title": "Red or Blue?", "description": "Obtain a Latias or Latios", "points": 5},
+    1: {"title": "Starter I", "description": "Register a Treecko, Torchic or Mudkip before obtaining the Stone Badge.", "points": 1, "id": 339792, "badge": "383467"},
+    2: {"title": "Starter II", "description": "Register a Grovyle, Combusken or Marshtomp before obtaining the Stone Badge.", "points": 2, "id": 339793, "badge": "383468"},
+    3: {"title": "Starter III", "description": "Register a Sceptile, Blaziken or Swampert before obtaining the Stone Badge.", "points": 3, "id": 339794, "badge": "383469"},
+    4: {"title": "Red or Blue?", "description": "Register a Latias or Latios after becoming Champion.", "points": 5, "id": 340004, "badge": "383692"},
 }
 
 // Gym Badge List
 BadgeChallengeList =
 {
-    1: {"title": "Rustboro Rumble - Badge 1", "description": "Beat Roxanne with 39 Pokemon in the Pokedex", "points": 10, "offset": 0, "bit": bit7, "map": 0x0b, "submap": 0x03, "submapTwo": 0x03, "caughtAmount": 39},
-    2: {"title": "Mauville Marvel - Badge 2", "description": "Beat Winston with 66 Pokemon in the Pokedex", "points": 10, "offset": 1, "bit": bit1, "map": 0x0a, "submap": 0x00, "submapTwo": 0x00, "caughtAmount": 66},
-    3: {"title": "Lavaridge Lover - Badge 3", "description": "Beat Flannary with 90 Pokemon in the Pokedex", "points": 10, "offset": 1, "bit": bit2, "map": 0x04, "submap": 0x01, "submapTwo": 0x02, "caughtAmount": 90},
-    4: {"title": "Dewford Dominator - Badge 4", "description": "Beat Brawly with 101 Pokemon in the Pokedex", "points": 10, "offset": 1, "bit": bit3, "map": 0x03, "submap": 0x03, "submapTwo": 0x03, "caughtAmount": 101},
-    5: {"title": "Petalburg Powerhouse - Badge 5", "description": "Beat Norman with 101 Pokemon in the Pokedex", "points": 10, "offset": 1, "bit": bit4, "map": 0x08, "submap": 0x01, "submapTwo": 0x01, "caughtAmount": 101},
-    6: {"title": "Mossdeep Master - Badge 6", "description": "Beat Tate and Liza with 156 Pokemon in the Pokedex", "points": 10, "offset": 1, "bit": bit5, "map": 0x0e, "submap": 0x00, "submapTwo": 0x00, "caughtAmount": 156},
-    7: {"title": "Sootopolis Saviour - Badge 7", "description": "Beat Jaun with 167 Pokemon in the Pokedex", "points": 10, "offset": 1, "bit": bit6, "map": 0x0f, "submap": 0x00, "submapTwo": 0x01, "caughtAmount": 167},
-    8: {"title": "Fortree Flyer - Badge 8", "description": "Beat Winona with 171 Pokemon in the Pokedex", "points": 10, "offset": 1, "bit": bit7, "map": 0x0c, "submap": 0x01, "submapTwo": 0x01, "caughtAmount": 171},
+    1: {"title": "Rustboro Rumble - Badge 1", "description": "Beat Roxanne with 39 Pokemon registered in the Pokedex.", "points": 10, "offset": 0, "bit": bit7, "map": 0x0b, "submap": 0x03, "submapTwo": 0x03, "caughtAmount": 39, "id": 340007, "badge": "383694"},
+    2: {"title": "Mauville Marvel - Badge 2", "description": "Beat Wattson with 66 Pokemon registered in the Pokedex.", "points": 10, "offset": 1, "bit": bit1, "map": 0x0a, "submap": 0x00, "submapTwo": 0x00, "caughtAmount": 66, "id": 340008, "badge": "383695"},
+    3: {"title": "Lavaridge Lover - Badge 3", "description": "Beat Flannery with 90 Pokemon registered in the Pokedex.", "points": 10, "offset": 1, "bit": bit2, "map": 0x04, "submap": 0x01, "submapTwo": 0x02, "caughtAmount": 90, "id": 340009, "badge": "383696"},
+    4: {"title": "Dewford Dominator - Badge 4", "description": "Beat Brawly with 101 Pokemon registered in the Pokedex.", "points": 10, "offset": 1, "bit": bit0, "map": 0x03, "submap": 0x03, "submapTwo": 0x03, "caughtAmount": 101, "id": 340010, "badge": "383697"},
+    5: {"title": "Petalburg Powerhouse - Badge 5", "description": "Beat Norman with 101 Pokemon registered in the Pokedex.", "points": 10, "offset": 1, "bit": bit3, "map": 0x08, "submap": 0x01, "submapTwo": 0x01, "caughtAmount": 101, "id": 340011, "badge": "383698"},
+    6: {"title": "Mossdeep Master - Badge 6", "description": "Beat Tate and Liza with 156 Pokemon registered in the Pokedex.", "points": 10, "offset": 1, "bit": bit5, "map": 0x0e, "submap": 0x00, "submapTwo": 0x00, "caughtAmount": 156, "id": 340012, "badge": "383699"},
+    7: {"title": "Sootopolis Saviour - Badge 7", "description": "Beat Juan with 167 Pokemon registered in the Pokedex.", "points": 10, "offset": 1, "bit": bit6, "map": 0x0f, "submap": 0x00, "submapTwo": 0x01, "caughtAmount": 167, "id": 340013, "badge": "383700"},
+    8: {"title": "Fortree Flyer - Badge 8", "description": "Beat Winona with 171 Pokemon registered in the Pokedex.", "points": 10, "offset": 1, "bit": bit4, "map": 0x0c, "submap": 0x01, "submapTwo": 0x01, "caughtAmount": 171, "id": 340014, "badge": "383703"},
 }
 
 function MusicID() => byte(0x0f48)
@@ -946,70 +940,33 @@ function PokedexFlag(id)
     IDAddress
 }
 
-function CaughtPokemon(id, badge)
+function FlickerProtection()
 {
-    return 
-    PointerNotNull() && 
-    PlayerInGame() &&
-    MapBank() == prev(MapBank()) && 
-    PokedexFlag(id) > prev(PokedexFlag(id))
+    return
+    MapBank() == prev(MapBank()) &&
+    Pointer() == prev(Pointer()) &&
+    repeated(5, Pointer() == prev(Pointer()) && never(Pointer() != prev(Pointer())))
 }
 
-function PrevLevelMusic() {
-    MusicID() == LevelUpMusic &&
-    prev(MusicID()) == LevelUpMusic
-}
-
-// Starter Achievments
-achievement(
-    SpecialCaseList[1]["title"],
-    SpecialCaseList[1]["description"],
-    SpecialCaseList[1]["points"],
-    PlayerInGame() && PointerNotNull() && (CaughtPokemon(252, 0) || CaughtPokemon(255, 0) || CaughtPokemon(258, 0))
-    )
-
-achievement(
-    SpecialCaseList[2]["title"],
-    SpecialCaseList[2]["description"],
-    SpecialCaseList[2]["points"],
-    PlayerInGame() && PointerNotNull() && (CaughtPokemon(253, 0) || CaughtPokemon(256, 0) || CaughtPokemon(259, 0))
-    )
-
-achievement(
-    SpecialCaseList[3]["title"],
-    SpecialCaseList[3]["description"],
-    SpecialCaseList[3]["points"],
-    PlayerInGame() && PointerNotNull() && (CaughtPokemon(254, 0) || CaughtPokemon(257, 0) || CaughtPokemon(260, 0))
-    )
-
-// Main Achievements
-
-// New template that uses the pokemons national dex id number and uses a function to calculate the offset from there
-function AchievementTemplate(title, description, points, id, badge)
+// Pokemon whose catch window doesn't match their "badges" group.
+// Values are every badge group the Pokemon may be obtained in.
+BadgeExceptions =
 {
-    achievement(title, description, points, CaughtPokemon(id, badge))
+    345: [3, 8],   // Lileep
+    346: [3, 8],   // Cradily
+    347: [3, 8],   // Anorith
+    348: [3, 8],   // Armaldo
+    45:  [5, 6],   // Vileplume - one Leaf Stone evo is required before Tate and Liza
+    275: [5, 6],   // Shiftry
 }
 
-for Pokemon in CatchableList
-{        
-    AchievementTemplate(
-        CatchableList[Pokemon]["title"],
-        CatchableList[Pokemon]["description"],
-        CatchableList[Pokemon]["points"],
-        CatchableList[Pokemon]["id"],
-        CatchableList[Pokemon]["badges"])
-}
+// Exact badge count for a group
+function BadgeCountIs(group) => SumOfBadges() == group
 
-// Latias/Latios Achievement
-achievement(
-    SpecialCaseList[4]["title"],
-    SpecialCaseList[4]["description"],
-    SpecialCaseList[4]["points"],
-    CaughtPokemon(380, 9) || CaughtPokemon(381, 9)
-    )
-
-
-
+// One complete fossil line (only one is obtainable before the post-game)
+function FossilLineComplete() =>
+    (PokedexFlag(345) == 1 && PokedexFlag(346) == 1) ||
+    (PokedexFlag(347) == 1 && PokedexFlag(348) == 1)
 
 function CheckPrevBadge(badge)
 {
@@ -1019,7 +976,7 @@ function CheckPrevBadge(badge)
     {
         if(CatchableList[Pokemon]["badges"] < badge)
         {
-            Sum = Sum && PokedexFlag(CatchableList[Pokemon]["id"]) == 1
+            Sum = Sum && PokedexFlag(CatchableList[Pokemon]["num"]) == 1
             
             Count = Count + 1
         }
@@ -1035,14 +992,16 @@ function CheckPrevBadge(badge)
         )
     }
     
-    if(badge == 4 || badge == 5)
+    // One fossil line from Brawly onwards (both lines are in the list for Steven)
+    if(badge >= 4 && badge <= 8)
     {
-        Sum = Sum && ((PokedexFlag(345) == 1 && PokedexFlag(346) == 1 ) || (PokedexFlag(347) == 1 && PokedexFlag(348) == 1))
+        Sum = Sum && FossilLineComplete()
     }
     
+    // One Leaf Stone evolution before Tate and Liza
     if(badge == 6)
     {
-        Sum = Sum && ((PokedexFlag(345) == 1 && PokedexFlag(346) == 1 ) || (PokedexFlag(347) == 1 && PokedexFlag(348) == 1) || (PokedexFlag(45) == 1 || PokedexFlag(275) == 1))
+        Sum = Sum && (PokedexFlag(45) == 1 || PokedexFlag(275) == 1)
     }
     
     if(badge == 9)
@@ -1053,21 +1012,139 @@ function CheckPrevBadge(badge)
     return Sum
 }
 
+// Every Pokemon from the sections before this group must already be in the dex
+function PrevSectionsComplete(group)
+{
+    if (group <= 0)
+    {
+        return always_true()
+    }
+
+    return CheckPrevBadge(group)
+}
+
+// Exact badge count AND all earlier sections complete
+function BadgeWindow(group) => BadgeCountIs(group) && PrevSectionsComplete(group)
+
+function HasRequiredBadges(num, badges)
+{
+    if (dictionary_contains_key(BadgeExceptions, num))
+    {
+        logic = always_false()
+        for group in BadgeExceptions[num]
+        {
+            logic = logic || BadgeWindow(group)
+        }
+        return logic
+    }
+
+    return BadgeWindow(badges)
+}
+
+function CaughtPokemon(num, badges)
+{
+    return
+    PointerNotNull() &&
+    PlayerInGame() &&
+    HasRequiredBadges(num, badges) &&
+    PokedexFlag(num) > prev(PokedexFlag(num))
+}
+
+function PrevLevelMusic() {
+    MusicID() == LevelUpMusic &&
+    prev(MusicID()) == LevelUpMusic
+}
+
+// Starter Achievments
+// Starter Achievements - badge check shared in core, only the catch is in the alts
+function StarterAchievement(index, first, second, third)
+{
+    achievement(
+        SpecialCaseList[index]["title"],
+        SpecialCaseList[index]["description"],
+        SpecialCaseList[index]["points"],
+        PlayerInGame() &&
+        PointerNotNull() &&
+        FlickerProtection() &&
+        BadgeCountIs(0) &&
+        (
+            PokedexFlag(first) > prev(PokedexFlag(first)) ||
+            PokedexFlag(second) > prev(PokedexFlag(second)) ||
+            PokedexFlag(third) > prev(PokedexFlag(third))
+        ),
+        id = SpecialCaseList[index]["id"],
+        badge = SpecialCaseList[index]["badge"]
+        )
+}
+
+StarterAchievement(1, 252, 255, 258)   // Treecko/Torchic/Mudkip
+StarterAchievement(2, 253, 256, 259)   // Grovyle/Combusken/Marshtomp
+StarterAchievement(3, 254, 257, 260)   // Sceptile/Blaziken/Swampert
+
+// Main Achievements
+
+// New template that uses the pokemons national dex id number and uses a function to calculate the offset from there
+function AchievementTemplate(title, description, points, num, badges, id, badge)
+{
+    achievement(
+    	title,
+    	description,
+    	points,
+    	FlickerProtection() &&
+    	CaughtPokemon(num, badges),
+    	id = id,
+    	badge = badge)
+}
+
+for Pokemon in CatchableList
+{
+    AchievementTemplate(
+        CatchableList[Pokemon]["title"],
+        CatchableList[Pokemon]["description"],
+        CatchableList[Pokemon]["points"],
+        CatchableList[Pokemon]["num"],
+        CatchableList[Pokemon]["badges"],
+        CatchableList[Pokemon]["id"],
+        CatchableList[Pokemon]["badge"])
+}
+
+// Latias/Latios Achievement
+// Badge and dex requirements are shared, so only the catch check is inside the OR
+achievement(
+    SpecialCaseList[4]["title"],
+    SpecialCaseList[4]["description"],
+    SpecialCaseList[4]["points"],
+    PlayerInGame() &&
+    PointerNotNull() &&
+    FlickerProtection() &&
+    BadgeWindow(8) &&
+    (PokedexFlag(380) > prev(PokedexFlag(380)) || PokedexFlag(381) > prev(PokedexFlag(381))),
+    id = SpecialCaseList[4]["id"],
+    badge = SpecialCaseList[4]["badge"]
+    )
+
 ActualBadgeCount = 0
 // Gym Challenge Checkpoints
-function GymBadgeTemplate(title, description, points, offset, bit, map, submap, submapTwo, caughtAmount)
+// This is slightly broken as I don't know how to make it generate a ResetNextIf with one of the conditions requiring hits but not using disable_when because I don't want a PauseIf.
+// To fix the generated code change the generated ResetIf to a ResetNextIf, add a trigger to the MusicID check and add an additonal MapBank == map check to the bottom of the definition in RALib
+// that should fix the icon appearing for the trigger on the correct map.
+function GymBadgeTemplate(title, description, points, offset, bit, map, submap, submapTwo, caughtAmount, id, badge)
 {
     obtainedBadge = bit(Pointer() + BadgeOffsetArray[offset]) > prev(bit(Pointer() + BadgeOffsetArray[offset]))
     achievement(    
         title,
         description,
         points,
-        trigger_when(once(MusicID() == GymLeaderBattleMusic) && obtainedBadge) &&
+        trigger_when(once(MusicID() == GymLeaderBattleMusic && never(MapBank() != map))) &&
+        trigger_when(obtainedBadge) &&
         CheckPrevBadge(ActualBadgeCount + 1) &&
-        disable_when(MapBank() != map, until=MapBank() == map) &&
         PlayerInGame() &&
         PointerNotNull() &&
-        (SubMap() == submap || (SubMap() == submapTwo)))
+        FlickerProtection() &&
+        (SubMap() == submap || (SubMap() == submapTwo)) &&
+        MapBank() == map,
+        id = id,
+        badge = badge)
     ActualBadgeCount = ActualBadgeCount + 1
 }
 
@@ -1082,30 +1159,31 @@ for Badge in BadgeChallengeList
         BadgeChallengeList[Badge]["map"],
         BadgeChallengeList[Badge]["submap"],
         BadgeChallengeList[Badge]["submapTwo"],
-        BadgeChallengeList[Badge]["caughtAmount"])
+        BadgeChallengeList[Badge]["caughtAmount"],
+        BadgeChallengeList[Badge]["id"],
+        BadgeChallengeList[Badge]["badge"])
 }
 
-
 // Final achievement
+// CheckPrevBadge(9) = every CatchableList entry (both fossil lines included) + a starter line + Latias/Latios = 212
 achievement(
     "Stevens' Superior - Final Battle",
-    "Beat Steven Stone at Meteor Falls with 212 Pokemon in the Pokedex",
-    10,
+    "Beat Steven Stone at Meteor Falls with 212 Pokemon registered in the Pokedex.",
+    25,
     PointerNotNull() &&
     PlayerInGame() &&
-    trigger_when(repeated(750, MusicID() == StevenStoneBattleMusic)) &&
-    trigger_when(
-        (Opp1Health() == 0 &&
-        Opp2Health() == 0 &&
-        Opp3Health() == 0 &&
-        Opp4Health() == 0 &&
-        Opp5Health() == 0 &&
-        Opp6Health() == 0)
-    ) &&
-    CheckPrevBadge(9) &&
-    disable_when(MapBank() != 0x18, until=MapBank() == 0x18) &&
-    disable_when(SubMap() != 0x6b, until=SubMap() == 0x6b)
+    FlickerProtection() &&
+    MapBank() == 0x18 &&
+    SubMap() == 0x6b &&
+    trigger_when(once(MusicID() == StevenStoneBattleMusic && never(SubMap() != 0x6b))) &&
+    //disable_when(SubMap() != 0x6b, until=SubMap() == 0x6b) &&
+    trigger_when(prev(byte(0x02c33a)) != 0x01 && never(MusicID() != StevenStoneBattleMusic)) &&
+    trigger_when(once(never(prior(byte(0x02c33a)) == 0x01) && byte(0x02c33a) == 0x01)) &&
+    CheckPrevBadge(9),
+    id = 340015,
+    badge = "383704"
 )
+
 
 PokemonOffsetArray =
     [ 0x707C, 0x707D, 0x707E, 0x707F, 0x7080,
@@ -1137,12 +1215,6 @@ function SumOfCaught()
     return Sum
 }
 
-function SumOfBadges()
-{
-    BadgeSum = bitcount(Pointer() + 0x937D) - bit7(Pointer() + 0x937D) + bit7(Pointer() + 0x937C)
-    return BadgeSum
-}
-
 function LastUsedPokeball() => byte(0x2c208)
 
 // Rich Presence
@@ -1169,10 +1241,3 @@ rich_presence_display("{0}{1}{2}{3}{4}{5}{6} | Caught: {7}/212 | Badges: {8}/8",
     rich_presence_lookup("name", byte(Pointer() + 0x705a), letters),
     rich_presence_macro("Number", measured(SumOfCaught())),
     rich_presence_macro("Number", measured(SumOfBadges())))
-
-
-
-
-
-
-
